@@ -1,20 +1,21 @@
+// SignUp_Form.js
 import React, { useState } from "react";
 import styled from "styled-components";
 import SignUp_Submit from "./SignUp_Submit";
+import GoToButton from "./GoToButton";
 
-// FormWrapper: 폼을 감싸는 영역
 const FormWrapper = styled.div`
   width: 100%;
-  max-width: 500px;
+  max-width: 800px;
   margin: 50px auto;
-  padding: 30px;
+  padding: 40px;
   background-color: #ffffff;
   border-radius: 10px;
   box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+  position: relative;
 `;
 
-// FormTitle: 회원가입 제목 스타일
 const FormTitle = styled.h2`
   text-align: center;
   font-size: 2.5rem;
@@ -29,7 +30,6 @@ const InputWrapper = styled.div`
   position: relative;
 `;
 
-// Label: 인풋 필드에 플로팅되는 라벨
 const Label = styled.label`
   position: absolute;
   left: 10px;
@@ -71,6 +71,8 @@ const SignUp_Form = () => {
 
   return (
     <FormWrapper>
+      <GoToButton to="/signin" />
+
       <FormTitle>회원 가입</FormTitle>
 
       <InputWrapper>
