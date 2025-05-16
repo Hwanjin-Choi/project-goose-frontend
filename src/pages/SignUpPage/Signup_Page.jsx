@@ -1,6 +1,5 @@
 import React from "react";
 import SignUp_Form from "../../components/Signup/Signup_Form";
-import styled, { createGlobalStyle } from "styled-components";
 import styled from "styled-components";
 
 const PageWrapper = styled.div`
