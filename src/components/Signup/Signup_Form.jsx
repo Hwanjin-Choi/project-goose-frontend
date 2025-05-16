@@ -3,6 +3,8 @@ import styled from "styled-components";
 import SignUp_Submit from "./SignUp_Submit";
 import GoToButton from "./GoToButton";
 
+import { SignUp } from "../../api/SignUp/signUpApi";
+
 const FormWrapper = styled.div`
   width: 100%;
   max-width: 600px;
@@ -80,13 +82,13 @@ const ErrorMessage = styled.p`
 
 const SignUp_Form = () => {
   const [userData, setUserData] = useState({
-    id: "",
+    username: "",
     password: "",
     nickname: "",
   });
 
   const [errors, setErrors] = useState({
-    id: "",
+    username: "",
     password: "",
     nickname: "",
   });
@@ -99,11 +101,11 @@ const SignUp_Form = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     setErrors({
-      id: "",
+      username: "",
       password: "",
       nickname: "",
     });
@@ -111,9 +113,9 @@ const SignUp_Form = () => {
     let formIsValid = true;
     const newErrors = {};
 
-    if (!userData.id) {
+    if (!userData.username) {
       formIsValid = false;
-      newErrors.id = "아이디 값이 필요합니다.";
+      newErrors.username = "아이디 값이 필요합니다.";
     }
     if (!userData.password) {
       formIsValid = false;
@@ -127,10 +129,12 @@ const SignUp_Form = () => {
     setErrors(newErrors);
 
     if (formIsValid) {
-      alert(
-        `아이디: ${userData.id}, 비밀번호: ${userData.password}, 닉네임: ${userData.nickname}`
-      );
-      // 여기에 서버 요청 로직 추가 가능
+      try {
+        const result = await SignUp(userData);
+        console.log("회원가입 성공:", result);
+      } catch (error) {
+        console.error("회원가입 실패:", error.message);
+      }
     }
   };
 
@@ -142,13 +146,13 @@ const SignUp_Form = () => {
       <InputWrapper>
         <Input
           type="text"
-          id="id"
-          value={userData.id}
+          id="username"
+          value={userData.name}
           onChange={handleChange}
           required
         />
-        <Label htmlFor="id">ID</Label>
-        {errors.id && <ErrorMessage>{errors.id}</ErrorMessage>}
+        <Label htmlFor="username">ID</Label>
+        {errors.username && <ErrorMessage>{errors.username}</ErrorMessage>}
       </InputWrapper>
 
       <InputWrapper>
