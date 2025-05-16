@@ -1,0 +1,102 @@
+/* 정렬 */
+.signin-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 90vh;
+}
+
+/* 박스 */
+.login-box {
+  background-color: #fff;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 400px;
+  text-align: center;
+}
+
+.login-box h1 {
+  margin-bottom: 20px;
+  font-size: 28px;
+  font-weight: bold;
+  color: #333;
+}
+
+.login-box p {
+  margin-bottom: 30px;
+  color: #666;
+}
+
+.login-box input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.login-box button {
+  padding: 12px 24px;
+  margin: 8px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.login-box button:hover {
+  background-color: #218838;
+}
+
+/* 아이디 패스워드 */
+.floating-label {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.floating-label input {
+  width: 100%;
+  padding: 14px 12px 14px 12px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+}
+
+.floating-label input:focus {
+  border-color: green;
+}
+
+.floating-label label {
+  position: absolute;
+  top: 35%;
+  left: 12px;
+  transform: translateY(-50%);
+  background: white;
+  padding: 0 4px;
+  color: #999;
+  font-size: 14px;
+  pointer-events: none;
+  transition: all 0.2s ease;
+}
+
+.floating-label input:focus + label,
+.floating-label input:not(:placeholder-shown) + label {
+  top: -8px;
+  font-size: 12px;
+  color: green;
+}
+
+/*에러*/
+.error-message {
+  color: red;
+  font-size: 12px;
+  margin-top: -15px;
+  text-align: center;
+}
