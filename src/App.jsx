@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout/Layout";
 import GlobalStyle from "./assets/GlobalStyles";
 import LandingPage from "./pages/LandingPage/LandingPage";
+import LoginPage from "./pages/LoginPage/SignIn";
 
 const HomePage = () => (
   <div style={{ padding: "20px" }}>
@@ -38,7 +39,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/about" element={<AboutPage />} />
-            {/* <Route path="/login" element={<LoginPage />} /> */}
+            <Route path="/login" element={<LoginPage />} />
             {/* <Route path="*" element={<NotFoundPage />} /> */}
           </Routes>
         </Layout>
