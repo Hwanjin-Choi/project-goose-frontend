@@ -8,4 +8,4 @@ import apiClient from "../index";
 //     console.error(errir);
 //     throw new Error("");
 //   }
-// };
+// }
