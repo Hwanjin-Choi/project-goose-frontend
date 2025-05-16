@@ -71,7 +71,7 @@ const SignUp_Form = () => {
 
   return (
     <FormWrapper>
-      <GoToButton to="/signin" />
+      <GoToButton to="/login" />
 
       <FormTitle>회원 가입</FormTitle>
 

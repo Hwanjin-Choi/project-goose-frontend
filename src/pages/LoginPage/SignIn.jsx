@@ -12,7 +12,7 @@ const Signin = () => {
   };
 
   const navi = () => {
-    /* navigate("/signup"); */
+    navigate("/registration");
   };
 
   return (
