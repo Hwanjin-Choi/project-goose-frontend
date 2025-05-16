@@ -38,7 +38,7 @@ const Layout = ({ children }) => {
   return (
     <ThemeProvider theme={theme}>
       {" "}
-      <Header />{" "}
+      <Header />
       <AppWrapper>
         <LayoutContainer>
           <MainContent>{children}</MainContent>
