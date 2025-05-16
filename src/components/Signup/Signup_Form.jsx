@@ -79,38 +79,47 @@ const ErrorMessage = styled.p`
 `;
 
 const SignUp_Form = () => {
-  const [id, setId] = useState("");
-  const [password, setPassword] = useState("");
-  const [nickname, setNickname] = useState("");
+  const [userData, setUserData] = useState({
+    id: "",
+    password: "",
+    nickname: "",
+  });
+
   const [errors, setErrors] = useState({
     id: "",
     password: "",
     nickname: "",
   });
 
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setUserData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // 에러 메시지 초기화
     setErrors({
       id: "",
       password: "",
       nickname: "",
     });
 
-    // 입력값 검증
     let formIsValid = true;
     const newErrors = {};
 
-    if (!id) {
+    if (!userData.id) {
       formIsValid = false;
       newErrors.id = "아이디 값이 필요합니다.";
     }
-    if (!password) {
+    if (!userData.password) {
       formIsValid = false;
       newErrors.password = "비밀번호 값이 필요합니다.";
     }
-    if (!nickname) {
+    if (!userData.nickname) {
       formIsValid = false;
       newErrors.nickname = "닉네임 값이 필요합니다.";
     }
@@ -118,7 +127,10 @@ const SignUp_Form = () => {
     setErrors(newErrors);
 
     if (formIsValid) {
-      alert(`아이디: ${id}, 비밀번호: ${password}, 닉네임: ${nickname}`);
+      alert(
+        `아이디: ${userData.id}, 비밀번호: ${userData.password}, 닉네임: ${userData.nickname}`
+      );
+      // 여기에 서버 요청 로직 추가 가능
     }
   };
 
@@ -131,11 +143,11 @@ const SignUp_Form = () => {
         <Input
           type="text"
           id="id"
-          value={id}
-          onChange={(e) => setId(e.target.value)}
+          value={userData.id}
+          onChange={handleChange}
           required
         />
-        <Label htmlFor="id">아이디</Label>
+        <Label htmlFor="id">ID</Label>
         {errors.id && <ErrorMessage>{errors.id}</ErrorMessage>}
       </InputWrapper>
 
@@ -143,11 +155,11 @@ const SignUp_Form = () => {
         <Input
           type="password"
           id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={userData.password}
+          onChange={handleChange}
           required
         />
-        <Label htmlFor="password">비밀번호</Label>
+        <Label htmlFor="password">Password</Label>
         {errors.password && <ErrorMessage>{errors.password}</ErrorMessage>}
       </InputWrapper>
 
@@ -155,11 +167,11 @@ const SignUp_Form = () => {
         <Input
           type="text"
           id="nickname"
-          value={nickname}
-          onChange={(e) => setNickname(e.target.value)}
+          value={userData.nickname}
+          onChange={handleChange}
           required
         />
-        <Label htmlFor="nickname">닉네임</Label>
+        <Label htmlFor="nickname">Nickname</Label>
         {errors.nickname && <ErrorMessage>{errors.nickname}</ErrorMessage>}
       </InputWrapper>
 
