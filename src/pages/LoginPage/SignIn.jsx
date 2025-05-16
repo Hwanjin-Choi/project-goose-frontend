@@ -73,8 +73,8 @@ const Signin = () => {
               placeholder=" "
             />
             <label htmlFor="email">ID</label>
-            {errors.id && <div className="error-message">{errors.id}</div>}
           </div>
+          {errors.id && <div className="error-message">{errors.id}</div>}
           <div className="floating-label">
             <input
               type="password"
@@ -85,8 +85,8 @@ const Signin = () => {
               placeholder=" "
             />
             <label htmlFor="pwd">Passwsord</label>
-            {errors.pwd && <div className="error-message">{errors.pwd}</div>}
           </div>
+          {errors.pwd && <div className="error-message">{errors.pwd}</div>}
           <div>
             <button id="signin" onClick={con}>
               로그인

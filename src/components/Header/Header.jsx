@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import styled, { createGlobalStyle } from "styled-components"; // createGlobalStyle은 현재 파일 내에서 사용되지 않으나, 전하의 코드에 포함되어 있어 유지합니다.
+import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faSearch,
@@ -10,7 +10,7 @@ import {
   faBookmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-
+import Goose from "../../assets/Goose.png";
 const HEADER_HEIGHT = "68px";
 
 // Styled Components 정의
@@ -337,7 +337,12 @@ const Header = () => {
     <HeaderWrapper>
       <Container>
         <LogoLink onClick={() => onNavigate("/")}>
-          <FontAwesomeIcon icon={faFeatherAlt} size="lg" />
+          {/* <FontAwesomeIcon icon={faFeatherAlt} size="lg" /> */}
+          <img
+            src={Goose}
+            style={{ width: "30px", height: "30px" }}
+            alt="logo"
+          />
           <LogoText>구스</LogoText>
         </LogoLink>
 
@@ -379,7 +384,7 @@ const Header = () => {
                       </DropdownSearchWrapper>
                       <DropdownItem
                         onClick={() => {
-                          onNavigate("/scrap"); // "저장된 기사"로 이동
+                          onNavigate("/scrap");
                           setIsDropdownOpen(false);
                         }}
                       >
@@ -400,8 +405,6 @@ const Header = () => {
                 </DropdownMenu>
               )}
               {!isMobile && (
-                // 데스크탑 "스크랩" 버튼에 primary prop 적용 여부는 전하의 의도에 따라 결정합니다.
-                // 여기서는 Google 스타일의 primary 버튼으로 표시합니다.
                 <ActionButton
                   primary="true"
                   onClick={() => onNavigate("/scrap")}
@@ -411,7 +414,6 @@ const Header = () => {
               )}
             </>
           ) : (
-            // 로그인 버튼은 primary가 아닌 기본 ActionButton 스타일로 표시
             <ActionButton onClick={onLogin}>로그인</ActionButton>
           )}
         </UserActionsWrapper>
@@ -420,5 +422,5 @@ const Header = () => {
   );
 };
 
-export { HEADER_HEIGHT }; // 헤더 높이를 export하여 Layout 등 다른 컴포넌트에서 사용
+export { HEADER_HEIGHT };
 export default Header;

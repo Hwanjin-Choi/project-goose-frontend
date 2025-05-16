@@ -57,7 +57,6 @@
 /* 아이디 패스워드 */
 .floating-label {
   position: relative;
-  margin-bottom: 20px;
 }
 
 .floating-label input {
@@ -97,6 +96,6 @@
 .error-message {
   color: red;
   font-size: 12px;
-  margin-top: -15px;
   text-align: center;
+  margin-bottom: 10px;
 }
