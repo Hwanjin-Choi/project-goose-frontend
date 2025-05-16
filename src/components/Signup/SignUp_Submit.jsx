@@ -22,14 +22,9 @@ const SubmitButton = styled.button`
   }
 `;
 
-const SignUp_Submit = ({ id, password, nickname }) => {
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert(`아이디: ${id}, 비밀번호: ${password}, 닉네임: ${nickname}`);
-  };
-
+const SignUp_Submit = ({ onClick }) => {
   return (
-    <SubmitButton type="submit" onClick={handleSubmit}>
+    <SubmitButton type="button" onClick={onClick}>
       제출
     </SubmitButton>
   );
