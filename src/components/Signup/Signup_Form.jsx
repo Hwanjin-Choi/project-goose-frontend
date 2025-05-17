@@ -1,9 +1,8 @@
 import React, { useState } from "react";
 import styled from "styled-components";
-import SignUp_Submit from "./SignUp_Submit";
+import SignUp_Submit_Btn from "./SignUp_Submit_Btn";
 import GoToButton from "./GoToButton";
-
-import { SignUp } from "../../api/SignUp/signUpApi";
+import { handleSubmit } from "./useHandleSubmit";
 
 const FormWrapper = styled.div`
   width: 100%;
@@ -101,41 +100,9 @@ const SignUp_Form = () => {
     }));
   };
 
-  const handleSubmit = async (e) => {
+  const onSubmit = (e) => {
     e.preventDefault();
-
-    setErrors({
-      username: "",
-      password: "",
-      nickname: "",
-    });
-
-    let formIsValid = true;
-    const newErrors = {};
-
-    if (!userData.username) {
-      formIsValid = false;
-      newErrors.username = "아이디 값이 필요합니다.";
-    }
-    if (!userData.password) {
-      formIsValid = false;
-      newErrors.password = "비밀번호 값이 필요합니다.";
-    }
-    if (!userData.nickname) {
-      formIsValid = false;
-      newErrors.nickname = "닉네임 값이 필요합니다.";
-    }
-
-    setErrors(newErrors);
-
-    if (formIsValid) {
-      try {
-        const result = await SignUp(userData);
-        console.log("회원가입 성공:", result);
-      } catch (error) {
-        console.error("회원가입 실패:", error.message);
-      }
-    }
+    handleSubmit({ userData, setErrors });
   };
 
   return (
@@ -147,7 +114,7 @@ const SignUp_Form = () => {
         <Input
           type="text"
           id="username"
-          value={userData.name}
+          value={userData.username}
           onChange={handleChange}
           required
         />
@@ -179,7 +146,7 @@ const SignUp_Form = () => {
         {errors.nickname && <ErrorMessage>{errors.nickname}</ErrorMessage>}
       </InputWrapper>
 
-      <SignUp_Submit onClick={handleSubmit} />
+      <SignUp_Submit_Btn onClick={onSubmit} />
     </FormWrapper>
   );
 };
