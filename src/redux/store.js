@@ -4,12 +4,13 @@ import { persistStore, persistReducer } from "redux-persist";
 // localStorage 저장
 import storage from "redux-persist/lib/storage";
 import userReducer from "./userData"; // 슬라이스에서 default로 export한 reducer
-
+import keywordSlice from "./keyword/keywordSlice";
 import { combineReducers } from "redux";
 
 // 여러 리듀서를 합치는 경우 (지금은 하나지만 확장성 고려)
 const rootReducer = combineReducers({
   user: userReducer,
+  keyword: keywordSlice,
 });
 
 // persist 설정

@@ -23,7 +23,6 @@ const AppWrapper = styled.div`
 const LayoutContainer = styled.div`
   position: relative;
   box-sizing: border-box;
-  overflow-y: scroll;
   min-height: calc(100vh - ${HEADER_HEIGHT});
   height: 100%;
 `;
