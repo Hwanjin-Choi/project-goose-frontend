@@ -7,6 +7,7 @@ export const SignUp = async ({ username, password, nickname }) => {
       username,
       password,
       nickname,
+      admin,
     });
     return response.data;
   } catch (error) {

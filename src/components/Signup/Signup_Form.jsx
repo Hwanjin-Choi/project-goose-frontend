@@ -5,19 +5,17 @@ import GoToButton from "./GoToButton";
 import { handleSubmit } from "./useHandleSubmit";
 
 const FormWrapper = styled.div`
-  width: 100%;
-  max-width: 600px;
+  width: 400px;
   margin: 50px auto;
   padding: 40px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  box-sizing: border-box;
-  position: relative;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 `;
 
 const FormTitle = styled.h2`
@@ -79,11 +77,22 @@ const ErrorMessage = styled.p`
   margin-top: 5px;
 `;
 
+const CheckboxWrapper = styled.div`
+  width: 100%;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  color: #333;
+`;
+
 const SignUp_Form = () => {
   const [userData, setUserData] = useState({
     username: "",
     password: "",
     nickname: "",
+    isAdmin: false,
   });
 
   const [errors, setErrors] = useState({
@@ -93,10 +102,11 @@ const SignUp_Form = () => {
   });
 
   const handleChange = (e) => {
-    const { id, value } = e.target;
+    const { id, value, type, checked } = e.target;
+
     setUserData((prev) => ({
       ...prev,
-      [id]: value,
+      [id]: type === "checkbox" ? checked : value,
     }));
   };
 
@@ -145,6 +155,16 @@ const SignUp_Form = () => {
         <Label htmlFor="nickname">Nickname</Label>
         {errors.nickname && <ErrorMessage>{errors.nickname}</ErrorMessage>}
       </InputWrapper>
+
+      <CheckboxWrapper>
+        <input
+          type="checkbox"
+          id="isAdmin"
+          checked={userData.isAdmin}
+          onChange={handleChange}
+        />
+        <label htmlFor="isAdmin">관리자 권한</label>
+      </CheckboxWrapper>
 
       <SignUp_Submit_Btn onClick={onSubmit} />
     </FormWrapper>
