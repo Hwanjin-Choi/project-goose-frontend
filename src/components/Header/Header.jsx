@@ -11,6 +11,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import Goose from "../../assets/Goose.png";
+import { useSelector, useDispatch } from "react-redux";
+import useMobileDetect from "../../hook/useMobileDetect";
+import { setKeyword } from "../../redux/keyword/keywordSlice";
+
 const HEADER_HEIGHT = "68px";
 
 // Styled Components 정의
@@ -282,24 +286,23 @@ const MainSearchInput = ({
 
 // Header 컴포넌트
 const Header = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const currentKeyword = useSelector((state) => state.keyword.searchText);
+  const dispatch = useDispatch();
+  const [searchTerm, setSearchTerm] = useState(currentKeyword);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(true); // 전하의 코드에 따라 기본값을 true로 설정
+  const isMobile = useMobileDetect();
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   const dropdownRef = useRef(null);
-  const navigate = useNavigate(); // react-router-dom의 useNavigate 사용
+  const navigate = useNavigate();
 
-  const nickname = "문어체"; // 전하의 코드에 있는 닉네임
+  const nickname = "문어체";
 
-  // 로그인/아웃 및 네비게이션 함수는 전하의 코드에서 가져옴
   const onLogin = () => {
     setIsLoggedIn(true);
-    // 실제 로그인 로직 추가 가능
   };
   const onLogout = () => {
     setIsLoggedIn(false);
-    // 실제 로그아웃 로직 추가 가능
   };
   const onNavigate = (url) => {
     navigate(url);
@@ -307,21 +310,12 @@ const Header = () => {
 
   const handleSearch = (term) => {
     if (term.trim() !== "") {
-      onNavigate(`/search-news-page?query=${encodeURIComponent(term)}`);
-      setSearchTerm(""); // 검색 후 입력창 비우기
+      dispatch(setKeyword(term));
+      onNavigate("/view-news");
     }
   };
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    handleResize(); // 초기 로드 시 실행
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {

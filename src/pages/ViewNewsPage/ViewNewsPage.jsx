@@ -1,8 +1,13 @@
-import React, { useState } from "react";
+import React, { use, useState } from "react";
 import styled from "styled-components";
 import { NewsCard } from "../../components/NewsCard/NewsCard";
 import MainSearchInput from "../../components/MainSearchInput/MainSearchInput"; // MainSearchInput 임포트
 import { getNewsApi } from "../../api/News/fetchNews";
+import NewsCardSkeleton from "../../components/NewsCardSkeleton/NewsCardSkeleton";
+import { useSelector, useDispatch } from "react-redux";
+import { setKeyword } from "../../redux/keyword/keywordSlice";
+import useMobileDetect from "../../hook/useMobileDetect";
+
 // 샘플 뉴스 데이터 (배열 형태로 여러 개를 관리하도록 수정)
 const sampleNewsDataArray = [
   {
@@ -57,38 +62,59 @@ const SearchInputWrapper = styled.div`
 const NewsCardsContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 20px; /* 뉴스 카드 사이의 간격 */
+  gap: 10px; /* 뉴스 카드 사이의 간격 */
   width: 100%;
-  max-width: 800px; /* NewsCard의 max-width와 일치시키거나 적절히 조절 */
-  align-items: center; /* 카드들이 중앙에 오도록 (카드의 너비가 100%가 아닐 경우 대비) */
+  align-items: center;
 `;
 
 const ViewNewsPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const currentKeyword = useSelector((state) => state.keyword.searchText);
+  const [searchTerm, setSearchTerm] = useState(currentKeyword);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const dispatch = useDispatch();
+  const isMobile = useMobileDetect();
 
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
   };
 
   const handleSearch = async (query) => {
+    dispatch(setKeyword(query));
     const res = await getNewsApi();
     console.log(res);
   };
 
   return (
     <ViewNewsPageWrapper>
-      <SearchInputWrapper>
-        <MainSearchInput
-          value={searchTerm}
-          onChange={handleInputChange}
-          onSearch={handleSearch}
-          placeholder="관심 있는 뉴스를 검색해 보세요"
-        />
-      </SearchInputWrapper>
+      {isMobile && (
+        <SearchInputWrapper>
+          <MainSearchInput
+            value={searchTerm}
+            onChange={handleInputChange}
+            onSearch={handleSearch}
+            placeholder="관심 있는 뉴스를 검색해 보세요"
+          />
+        </SearchInputWrapper>
+      )}
+
       <NewsCardsContainer>
         {sampleNewsDataArray.map((newsItem) => (
           <NewsCard key={newsItem.id} newsItem={newsItem} />
         ))}
+
+        {isLoading && (
+          <>
+            {[...Array(3)].map(
+              (
+                _,
+                index // 다음 3개에 대한 스켈레톤
+              ) => (
+                <NewsCardSkeleton key={`skeleton-${index}`} />
+              )
+            )}
+          </>
+        )}
       </NewsCardsContainer>
     </ViewNewsPageWrapper>
   );

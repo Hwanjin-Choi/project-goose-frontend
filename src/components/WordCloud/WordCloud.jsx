@@ -153,7 +153,7 @@ const PackedBubbleChart = ({ dataFromServer }) => {
         console.log("버블 클릭됨:", d.data);
         const keyword = d.data.name;
         dispatch(setKeyword(keyword));
-        navigate(`/view-news/${d.data.name}`); // 필요시 경로 수정
+        navigate(`/view-news`);
       });
 
     node
@@ -264,11 +264,11 @@ const PackedBubbleChart = ({ dataFromServer }) => {
         hasValidData ? (
           <svg ref={svgRef} /> // SVG 크기는 effect에서 설정됨
         ) : (
-          <p style={{ textAlign: "center" }}>표시할 데이터가 없사옵니다.</p>
+          <p style={{ textAlign: "center" }}>표시할 데이터가 없습니다.</p>
         )
       ) : (
         // 크기 측정 중이거나 초기 상태일 때 표시할 내용 (선택 사항)
-        <p>차트 크기를 계산 중이옵니다...</p>
+        <p>차트 크기를 계산 중...</p>
       )}
     </div>
   );
