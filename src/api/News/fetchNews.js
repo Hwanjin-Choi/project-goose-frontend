@@ -83,7 +83,8 @@ export const getNewsApi = async () => {
           resolve({ news: [], done: true }); // 모든 뉴스를 다 가져왔음을 알림
           return;
         }
-        const endIndex = Math.min(currentIndex + 3, sampleNewsDataArray.length);
+        // 하나씩 받아오기
+        const endIndex = Math.min(currentIndex + 1, sampleNewsDataArray.length);
         const batch = sampleNewsDataArray.slice(currentIndex, endIndex);
         currentIndex = endIndex;
 
