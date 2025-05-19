@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as d3 from "d3";
 import { useNavigate } from "react-router-dom";
-
+import { useDispatch, useSelector } from "react-redux";
+import { setKeyword } from "../../redux/keyword/keywordSlice";
 const PackedBubbleChart = ({ dataFromServer }) => {
   const navigate = useNavigate();
   const svgRef = useRef(null);
@@ -9,6 +10,7 @@ const PackedBubbleChart = ({ dataFromServer }) => {
   const [layoutData, setLayoutData] = useState(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 }); // 동적 크기를 저장할 state
   const margin = 10;
+  const dispatch = useDispatch();
 
   // 컨테이너 div의 크기 변경을 감지하는 useEffect
   useEffect(() => {
@@ -30,11 +32,9 @@ const PackedBubbleChart = ({ dataFromServer }) => {
         resizeObserver.unobserve(currentContainer);
       }
     };
-  }, []); // 컴포넌트 마운트 시 한 번만 실행
+  }, []);
 
-  // D3 pack 레이아웃 계산을 위한 useEffect
   useEffect(() => {
-    // 데이터가 없거나, 컨테이너 크기가 아직 설정되지 않았으면 레이아웃 계산을 중단
     if (
       !dataFromServer ||
       dataFromServer.length === 0 ||
@@ -151,7 +151,9 @@ const PackedBubbleChart = ({ dataFromServer }) => {
       })
       .on("click", function (event, d) {
         console.log("버블 클릭됨:", d.data);
-        navigate("/about"); // 필요시 경로 수정
+        const keyword = d.data.name;
+        dispatch(setKeyword(keyword));
+        navigate(`/view-news/${d.data.name}`); // 필요시 경로 수정
       });
 
     node
