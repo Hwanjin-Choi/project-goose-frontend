@@ -1,6 +1,6 @@
 import React from "react";
 import SignUp_Form from "../../components/Signup/Signup_Form";
-import styled, { createGlobalStyle } from "styled-components";
+import styled from "styled-components";
 
 const PageWrapper = styled.div`
   display: flex;
@@ -13,11 +13,9 @@ const PageWrapper = styled.div`
 
 const SignUP_Page = () => {
   return (
-    <>
-      <PageWrapper>
-        <SignUp_Form />
-      </PageWrapper>
-    </>
+    <PageWrapper>
+      <SignUp_Form />
+    </PageWrapper>
   );
 };
 
