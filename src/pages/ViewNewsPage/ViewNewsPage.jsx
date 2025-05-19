@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { NewsCard } from "../../components/NewsCard/NewsCard";
 import MainSearchInput from "../../components/MainSearchInput/MainSearchInput"; // MainSearchInput 임포트
-
+import { getNewsApi } from "../../api/News/fetchNews";
 // 샘플 뉴스 데이터 (배열 형태로 여러 개를 관리하도록 수정)
 const sampleNewsDataArray = [
   {
@@ -70,12 +70,9 @@ const ViewNewsPage = () => {
     setSearchTerm(event.target.value);
   };
 
-  const handleSearch = (query) => {
-    if (query.trim() !== "") {
-      alert(`"${query}"(으)로 검색을 실행합니다!`);
-    } else {
-      alert("검색어를 입력해주십시오.");
-    }
+  const handleSearch = async (query) => {
+    const res = await getNewsApi();
+    console.log(res);
   };
 
   return (
