@@ -4,6 +4,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import styled from "styled-components";
 
 import { NewsCard } from "../NewsCard/NewsCard";
+import NewsCardSkeleton from "../../components/NewsCardSkeleton/NewsCardSkeleton";
 
 const NewsCardsContainer = styled.div`
   display: flex;
@@ -47,7 +48,20 @@ const InfiniteScrollController = () => {
       dataLength={items.length}
       next={fetchData}
       hasMore={hasMore}
-      loader={<h4 style={{ textAlign: "center" }}>Loading...</h4>}
+      loader={
+        <NewsCardsContainer>
+          <>
+            {[...Array(1)].map(
+              (
+                _,
+                index // 다음 1개에 대한 스켈레톤 추후에 서버에서 몇개씩 넘기는지 확인하고 redux로 받기
+              ) => (
+                <NewsCardSkeleton key={`skeleton-${index}`} />
+              )
+            )}
+          </>
+        </NewsCardsContainer>
+      }
       endMessage={
         <p style={{ textAlign: "center" }}>
           <b>뉴스가 더 없습니다.</b>

@@ -4,7 +4,6 @@ import { NewsCard } from "../../components/NewsCard/NewsCard";
 import MainSearchInput from "../../components/MainSearchInput/MainSearchInput"; // MainSearchInput 임포트
 import { getNewsApi } from "../../api/News/fetchNews";
 import InfiniteScrollController from "../../components/InfiniteScrollController/infiniteScrollController";
-import NewsCardSkeleton from "../../components/NewsCardSkeleton/NewsCardSkeleton";
 import { useSelector, useDispatch } from "react-redux";
 import { setKeyword } from "../../redux/keyword/keywordSlice";
 import useMobileDetect from "../../hook/useMobileDetect";
@@ -39,7 +38,6 @@ const NewsCardsContainer = styled.div`
 const ViewNewsPage = () => {
   const currentKeyword = useSelector((state) => state.keyword.searchText);
   const [searchTerm, setSearchTerm] = useState(currentKeyword);
-  const [isLoading, setIsLoading] = useState(true);
 
   const dispatch = useDispatch();
   const isMobile = useMobileDetect();
@@ -66,23 +64,7 @@ const ViewNewsPage = () => {
           />
         </SearchInputWrapper>
       )}
-
       <InfiniteScrollController />
-
-      <NewsCardsContainer>
-        {isLoading && (
-          <>
-            {[...Array(3)].map(
-              (
-                _,
-                index // 다음 3개에 대한 스켈레톤
-              ) => (
-                <NewsCardSkeleton key={`skeleton-${index}`} />
-              )
-            )}
-          </>
-        )}
-      </NewsCardsContainer>
     </ViewNewsPageWrapper>
   );
 };
