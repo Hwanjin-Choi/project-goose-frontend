@@ -299,7 +299,9 @@ const Header = () => {
   const nickname = "문어체";
 
   const onLogin = () => {
-    setIsLoggedIn(true);
+    setIsLoggedIn(true); // 추후 변경
+
+    navigate("/login");
   };
   const onLogout = () => {
     setIsLoggedIn(false);
