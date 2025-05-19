@@ -10,7 +10,7 @@ import {
   faBookmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import Goose from "../../assets/Goose.png";
+import Goose from "../../assets/Goose_header.svg";
 import { useSelector, useDispatch } from "react-redux";
 import useMobileDetect from "../../hook/useMobileDetect";
 import { setKeyword } from "../../redux/keyword/keywordSlice";
@@ -314,6 +314,10 @@ const Header = () => {
       onNavigate("/view-news");
     }
   };
+
+  useEffect(() => {
+    setSearchTerm(currentKeyword);
+  }, [currentKeyword]);
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 

@@ -11,7 +11,6 @@ const NewsCardsContainer = styled.div`
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  max-width: 800px;
   align-items: center;
   margin: 0 auto;
 `;
@@ -76,7 +75,7 @@ const InfiniteScrollController = () => {
       releaseToRefreshContent={
         <h3 style={{ textAlign: "center" }}>&#8593; 놓으면 새로고침됩니다</h3>
       }
-      scrollThreshold={0.95} // 페이지 하단 5%에서 로딩 시작
+      scrollThreshold={0.5} // 페이지 하단 5%에서 로딩 시작
     >
       <NewsCardsContainer>
         {items.map((item) => (

@@ -28,6 +28,7 @@ const SkeletonCardWrapper = styled.div`
   flex-direction: column;
   overflow: hidden;
   width: 100%;
+  margin-top: 20px;
 
   @media (min-width: 768px) {
     flex-direction: row;
