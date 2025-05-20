@@ -50,7 +50,7 @@ const GoToLoginButton = ({ to = "" }) => {
           <path fill="none" d="M0 0h24v24H0z" />
           <path d="M14 7l-5 5 5 5V7z" fill="#ffffff" />
         </svg>
-        뒤로가기
+        로그인
       </button>
     </ButtonWrapper>
   );

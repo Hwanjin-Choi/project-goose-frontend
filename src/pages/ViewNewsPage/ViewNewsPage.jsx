@@ -64,6 +64,7 @@ const ViewNewsPage = () => {
           />
         </SearchInputWrapper>
       )}
+
       <InfiniteScrollController />
     </ViewNewsPageWrapper>
   );

@@ -1,9 +1,9 @@
 // src/api/SignUp/signUpApi.js
 import apiClient from "../index";
 
-export const SignUp = async ({ username, password, nickname }) => {
+export const SignUp = async ({ username, password, nickname, admin }) => {
   try {
-    const response = await apiClient.post("/register", {
+    const response = await apiClient.post("/members/register", {
       username,
       password,
       nickname,
@@ -12,7 +12,7 @@ export const SignUp = async ({ username, password, nickname }) => {
     return response.data;
   } catch (error) {
     if (error.response && error.response.data && error.response.data.error) {
-      const errorMessage = error.response.data.error;
+      const errorMessage = error.response.data.message;
       console.error("회원가입 실패:", errorMessage);
       throw new Error(errorMessage);
     } else {

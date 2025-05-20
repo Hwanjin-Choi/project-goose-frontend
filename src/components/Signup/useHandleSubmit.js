@@ -1,6 +1,5 @@
 // src/hooks/useHandleSubmit.js
 import { SignUp } from "../../api/SignUp/signUpApi";
-
 export const handleSubmit = async ({ userData, setErrors }) => {
   // 초기화
   setErrors({
@@ -33,9 +32,9 @@ export const handleSubmit = async ({ userData, setErrors }) => {
     try {
       const result = await SignUp(userData);
       console.log("회원가입 성공:", result);
-      // 여기서 로그인 페이지로 이동 로직 짜기
+      //alert("정상적으로 회원가입에 성공하였습니다.");
     } catch (error) {
-      alert(error.message);
+      console.log(error.message);
     }
   }
 };
