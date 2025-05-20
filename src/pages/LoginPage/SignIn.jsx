@@ -2,10 +2,15 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SignIn.css";
 
+import { login as setToken, logout } from "../../redux/tokenSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { login as loginApi } from "../../api/Login/loginApi";
+
 const Signin = () => {
+  const dispatch = useDispatch();
   const [userData, setUserData] = useState({
-    id: "",
-    pwd: "",
+    username: "",
+    password: "",
   });
 
   const ud = (e) => {
@@ -16,39 +21,49 @@ const Signin = () => {
     }));
   };
 
-  // const con = () => {
-  //   console.log("아이디", userData.id);
-  //   console.log("비밀번호", userData.pwd);
-  // };
-
   const [errors, setErrors] = useState({
-    id: "",
-    pwd: "",
+    username: "",
+    password: "",
   });
 
-  const con = (e) => {
+  const con = async (e) => {
     e.preventDefault();
 
     setErrors({
-      id: "",
+      username: "",
       password: "",
     });
 
-    let formIsValid = true;
+    let noinform = true;
     const newErrors = {};
 
-    if (!userData.id) {
-      formIsValid = false;
-      newErrors.id = "아이디를 입력해야합니다.";
+    if (!userData.username) {
+      noinform = false;
+      newErrors.username = "아이디를 입력해야합니다.";
     }
-    if (!userData.pwd) {
-      formIsValid = false;
-      newErrors.pwd = "비밀번호를 입력해야합니다.";
+    if (!userData.password) {
+      noinform = false;
+      newErrors.password = "비밀번호를 입력해야합니다.";
     }
     setErrors(newErrors);
 
-    if (formIsValid) {
-      console.log(`아이디: ${userData.id}, 비밀번호: ${userData.pwd}`);
+    if (!noinform) return;
+
+    try {
+      const result = await loginApi(userData);
+      console.log("서버 응답:", result);
+
+      const { accessToken, refreshToken } = result.data.data;
+
+      dispatch(setToken({ accessToken, refreshToken }));
+
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+
+      navigate("/");
+    } catch (error) {
+      console.error("로그인 실패:", error);
+      alert("아이디 또는 비밀번호가 틀렸습니다.");
     }
   };
 
@@ -66,27 +81,31 @@ const Signin = () => {
           <div className="floating-label">
             <input
               type="text"
-              name="id"
-              value={userData.id}
+              name="username"
+              value={userData.username}
               onChange={ud}
               required
               placeholder=" "
             />
-            <label htmlFor="email">ID</label>
+            <label htmlFor="email">Username</label>
           </div>
-          {errors.id && <div className="error-message">{errors.id}</div>}
+          {errors.username && (
+            <div className="error-message">{errors.username}</div>
+          )}
           <div className="floating-label">
             <input
               type="password"
-              name="pwd"
-              value={userData.pwd}
+              name="password"
+              value={userData.password}
               onChange={ud}
               required
               placeholder=" "
             />
-            <label htmlFor="pwd">Passwsord</label>
+            <label htmlFor="password">Passwsord</label>
           </div>
-          {errors.pwd && <div className="error-message">{errors.pwd}</div>}
+          {errors.password && (
+            <div className="error-message">{errors.password}</div>
+          )}
           <div>
             <button id="signin" onClick={con}>
               로그인
