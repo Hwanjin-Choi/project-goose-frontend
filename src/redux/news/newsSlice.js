@@ -54,7 +54,15 @@ const newsSlice = createSlice({
         state.status = "succeeded";
         console.log(action.payload.data, "redux slice calling");
         const responseItem = action.payload.data;
-        state.newsList = [...state.newsList, ...responseItem.items];
+
+        // 각 아이템에 isLiked: false를 추가합니다.
+        const newsItemsWithIsLiked = responseItem.items.map((item) => ({
+          ...item,
+          isLiked: false, // 테스트용으로 isLiked 속성 추가
+        }));
+
+        state.newsList = [...state.newsList, ...newsItemsWithIsLiked]; // 수정된 아이템 리스트를 기존 리스트에 병합합니다.
+
         if (responseItem.total > state.newsList.length) {
           state.hasMore = true;
         } else {
