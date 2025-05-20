@@ -1,64 +1,63 @@
 import { useEffect, useState } from "react";
-import { getNewsApi, resetNewsFetchIndex } from "../../api/News/fetchNews";
 import InfiniteScroll from "react-infinite-scroll-component";
 import styled from "styled-components";
 
 import { NewsCard } from "../NewsCard/NewsCard";
 import NewsCardSkeleton from "../../components/NewsCardSkeleton/NewsCardSkeleton";
+import { useSelector, useDispatch } from "react-redux";
+import { getNewsByParam, resetNewsState } from "../../redux/news/newsSlice";
 
 const NewsCardsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 20px;
   width: 100%;
-  max-width: 800px;
   align-items: center;
   margin: 0 auto;
 `;
 
+const NEWS_START_INDEX = 1;
+const NEWS_DISPLAY_INDEX = 10;
+
 const InfiniteScrollController = () => {
-  const [items, setItems] = useState([]);
-  const [hasMore, setHasMore] = useState(true);
+  const currentKeyword = useSelector((state) => state.keyword.searchText);
+  const newsList = useSelector((state) => state.news.newsList);
+  const totalCount = useSelector((state) => state.news.totalCount);
+  const status = useSelector((state) => state.news.status);
+  const hasMore = useSelector((state) => state.news.hasMore);
 
-  useEffect(() => {
-    resetNewsFetchIndex();
-    void fetchData(); // 비동기 호출 명시
-  }, []);
+  const [start, setStart] = useState(NEWS_START_INDEX);
+  const [display, setDisplay] = useState(NEWS_DISPLAY_INDEX);
 
-  const fetchData = async () => {
-    try {
-      const result = await getNewsApi();
-      setItems((prev) => [...prev, ...result.news]);
-      setHasMore(!result.done);
-    } catch (error) {
-      console.error("뉴스 로딩 오류:", error);
-      setHasMore(false);
+  const dispatch = useDispatch();
+
+  const fetchNews = () => {
+    const payload = {
+      param: currentKeyword,
+      start: start,
+      display: display,
+    };
+    dispatch(getNewsByParam(payload));
+    if (status.suscceeded) {
+      setStart((prev) => prev + display);
     }
   };
-
-  const refresh = async () => {
-    resetNewsFetchIndex();
-    const result = await getNewsApi();
-    setItems(result.news);
-    setHasMore(!result.done);
-  };
+  useEffect(() => {
+    dispatch(resetNewsState());
+    fetchNews();
+  }, [currentKeyword]);
 
   return (
     <InfiniteScroll
-      dataLength={items.length}
-      next={fetchData}
+      dataLength={newsList.length}
+      next={fetchNews}
       hasMore={hasMore}
       loader={
         <NewsCardsContainer>
           <>
-            {[...Array(1)].map(
-              (
-                _,
-                index // 다음 1개에 대한 스켈레톤 추후에 서버에서 몇개씩 넘기는지 확인하고 redux로 받기
-              ) => (
-                <NewsCardSkeleton key={`skeleton-${index}`} />
-              )
-            )}
+            {[...Array(1)].map((_, index) => (
+              <NewsCardSkeleton key={`skeleton-${index}`} />
+            ))}
           </>
         </NewsCardsContainer>
       }
@@ -67,7 +66,9 @@ const InfiniteScrollController = () => {
           <b>뉴스가 더 없습니다.</b>
         </p>
       }
-      refreshFunction={refresh}
+      /* refreshFunction={() => {
+        console.log("refreshing");
+      }}
       pullDownToRefresh
       pullDownToRefreshThreshold={100}
       pullDownToRefreshContent={
@@ -75,12 +76,12 @@ const InfiniteScrollController = () => {
       }
       releaseToRefreshContent={
         <h3 style={{ textAlign: "center" }}>&#8593; 놓으면 새로고침됩니다</h3>
-      }
-      scrollThreshold={0.95} // 페이지 하단 5%에서 로딩 시작
+      } */
+      scrollThreshold={"95%"}
     >
       <NewsCardsContainer>
-        {items.map((item) => (
-          <NewsCard key={item.id} newsItem={item} />
+        {newsList.map((item, index) => (
+          <NewsCard key={index} newsItem={item} />
         ))}
       </NewsCardsContainer>
     </InfiniteScroll>

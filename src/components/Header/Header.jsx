@@ -10,7 +10,7 @@ import {
   faBookmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import Goose from "../../assets/Goose.png";
+import Goose from "../../assets/Goose_header.svg";
 import { useSelector, useDispatch } from "react-redux";
 import useMobileDetect from "../../hook/useMobileDetect";
 import { setKeyword } from "../../redux/keyword/keywordSlice";
@@ -312,10 +312,15 @@ const Header = () => {
 
   const handleSearch = (term) => {
     if (term.trim() !== "") {
+      console.log("hi");
       dispatch(setKeyword(term));
       onNavigate("/view-news");
     }
   };
+
+  useEffect(() => {
+    setSearchTerm(currentKeyword);
+  }, [currentKeyword]);
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
@@ -365,7 +370,7 @@ const Header = () => {
               </UserButton>
               {isDropdownOpen && (
                 <DropdownMenu>
-                  {isMobile && ( // 모바일 드롭다운 메뉴 구성은 전하의 코드 유지
+                  {isMobile && (
                     <>
                       <DropdownSearchWrapper>
                         <MainSearchInput

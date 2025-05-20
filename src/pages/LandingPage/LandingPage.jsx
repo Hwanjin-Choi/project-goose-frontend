@@ -21,9 +21,11 @@ const LandingPageContainer = styled.div`
 const StyledImage = styled.img`
   width: 200px;
   height: 200px;
+  padding: 20px;
   @media (max-width: 768px) {
     width: 100px;
     height: 100px;
+    padding: 10px;
   }
 `;
 const WordCloudWrapper = styled.div`

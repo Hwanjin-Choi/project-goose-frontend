@@ -75,7 +75,7 @@ export const resetNewsFetchIndex = () => {
   currentIndex = 0;
 };
 
-export const getNewsApi = async () => {
+export const getNewsApi2 = async () => {
   try {
     const result = await new Promise((resolve) => {
       setTimeout(() => {
@@ -96,6 +96,32 @@ export const getNewsApi = async () => {
   } catch (error) {
     console.error("뉴스 가져오기 오류:", error);
     throw new Error("뉴스를 가져오는데 실패했습니다.");
+  }
+};
+
+export const getNewsApi = async (payload) => {
+  try {
+    const response = await apiClient.get("/news", {
+      params: payload,
+    });
+    console.log(response);
+    if (response.data && response.data.status === "SUCCESS") {
+      return response.data;
+    } else {
+      throw new Error(response.data.message || "뉴스 검색의 실패했습니다");
+    }
+  } catch (error) {
+    console.error("뉴스 검색의 실패했습니다", error);
+
+    if (error.response && error.response.data && error.response.data.message) {
+      throw new Error(error.response.data.message);
+    } else if (error.request) {
+      throw new Error(
+        "서버로부터 응답을 받지 못했습니다. 네트워크 상태를 확인해주세요."
+      );
+    } else {
+      throw new Error("뉴스 검색의 실패했습니다");
+    }
   }
 };
 

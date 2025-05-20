@@ -35,7 +35,7 @@ const ThumbnailWrapper = styled.div`
   justify-content: center;
   align-items: center;
   overflow: hidden; // 이미지가 래퍼를 벗어나지 않도록
-
+  padding: 30px;
   width: 100%; // 모바일에서는 전체 너비
   height: 200px; // 모바일 이미지 높이
 
