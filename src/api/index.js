@@ -42,8 +42,8 @@ const processQueue = (error, token = null) => {
 };
 
 const handleLogoutForInterceptor = () => {
-  localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken");
+  /*   localStorage.removeItem("accessToken");
+  localStorage.removeItem("refreshToken"); */
   // window.location.href = '/login';
   console.error("User logged out from interceptor due to token issues.");
 };
@@ -62,6 +62,7 @@ apiClient.interceptors.response.use(
         error.response.data?.message === "인증이 필요합니다."
       ) {
         console.warn("Token invalid.");
+        console.log(error.response.data);
         handleLogoutForInterceptor();
         return Promise.reject(
           new Error(
@@ -108,7 +109,7 @@ apiClient.interceptors.response.use(
           { headers: { "Content-Type": "application/json" } }
         );
         const { accessToken: newAccessToken } = refreshResponse.data;
-
+        console.log(refreshResponse, "from handler");
         if (!newAccessToken)
           throw new Error("New access token not found in refresh response.");
 

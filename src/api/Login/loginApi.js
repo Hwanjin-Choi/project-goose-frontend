@@ -1,11 +1,9 @@
 import apiClient from "../index";
+import axios from "axios";
 
-// export const Login = async () => {
-//   try {
-//     힌트..
-//      const response = apiClient.get // apiClient.post
-//   } catch (error) {
-//     console.error(errir);
-//     throw new Error("");
-//   }
-// }
+export const login = async (userData) => {
+  const loginresponse = await apiClient.post("/members/login", userData);
+  console.log(loginresponse, "axios calling");
+
+  return loginresponse;
+};

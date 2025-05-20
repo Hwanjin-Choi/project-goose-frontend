@@ -17,6 +17,7 @@ export const getNewsByParam = createAsyncThunk(
   "news/news",
   async (payload, { rejectWithValue }) => {
     try {
+      console.log(payload);
       const response = await apiClient.get("/news", { params: payload });
       if (response.data && response.data.status === "SUCCESS") {
         return response.data;
