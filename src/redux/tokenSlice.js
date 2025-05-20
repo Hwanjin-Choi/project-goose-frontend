@@ -10,7 +10,7 @@ const tokenSlice = createSlice({
   reducers: {
     login: (state, action) => {
       state.accessToken = action.payload.accessToken;
-      state.refreshToken = action.payload.refeshToken;
+      state.refreshToken = action.payload.refreshToken;
     },
     logout: (state) => {
       state.accessToken = "";
