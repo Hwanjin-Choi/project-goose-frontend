@@ -3,7 +3,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import styled from "styled-components";
 
 import { NewsCard } from "../NewsCard/NewsCard";
-import NewsCardSkeleton from "../../components/NewsCardSkeleton/NewsCardSkeleton";
+import NewsCardSkeleton from "../NewsCardSkeleton/NewsCardSkeleton";
 import { useSelector, useDispatch } from "react-redux";
 import { getNewsByParam, resetNewsState } from "../../redux/news/newsSlice";
 
@@ -28,7 +28,6 @@ const InfiniteScrollController = () => {
 
   const [start, setStart] = useState(NEWS_START_INDEX);
   const [display, setDisplay] = useState(NEWS_DISPLAY_INDEX);
-
   const dispatch = useDispatch();
 
   const fetchNews = () => {
@@ -38,35 +37,37 @@ const InfiniteScrollController = () => {
       display: display,
     };
     dispatch(getNewsByParam(payload));
-    if (status.suscceeded) {
+    if (status === "succeeded") {
       setStart((prev) => prev + display);
     }
   };
+
   useEffect(() => {
     dispatch(resetNewsState());
     fetchNews();
   }, [currentKeyword]);
 
   return (
-    <InfiniteScroll
-      dataLength={newsList.length}
-      next={fetchNews}
-      hasMore={hasMore}
-      loader={
-        <NewsCardsContainer>
-          <>
-            {[...Array(1)].map((_, index) => (
-              <NewsCardSkeleton key={`skeleton-${index}`} />
-            ))}
-          </>
-        </NewsCardsContainer>
-      }
-      endMessage={
-        <p style={{ textAlign: "center" }}>
-          <b>뉴스가 더 없습니다.</b>
-        </p>
-      }
-      /* refreshFunction={() => {
+    <>
+      <InfiniteScroll
+        dataLength={newsList.length}
+        next={fetchNews}
+        hasMore={hasMore && status === "succeeded"}
+        loader={
+          <NewsCardsContainer>
+            <>
+              {[...Array(1)].map((_, index) => (
+                <NewsCardSkeleton key={`skeleton-${index}`} />
+              ))}
+            </>
+          </NewsCardsContainer>
+        }
+        endMessage={
+          <p style={{ textAlign: "center" }}>
+            <b>뉴스가 더 없습니다.</b>
+          </p>
+        }
+        /* refreshFunction={() => {
         console.log("refreshing");
       }}
       pullDownToRefresh
@@ -77,14 +78,15 @@ const InfiniteScrollController = () => {
       releaseToRefreshContent={
         <h3 style={{ textAlign: "center" }}>&#8593; 놓으면 새로고침됩니다</h3>
       } */
-      scrollThreshold={"95%"}
-    >
-      <NewsCardsContainer>
-        {newsList.map((item, index) => (
-          <NewsCard key={index} newsItem={item} />
-        ))}
-      </NewsCardsContainer>
-    </InfiniteScroll>
+        scrollThreshold={"70%"}
+      >
+        <NewsCardsContainer>
+          {newsList.map((item, index) => (
+            <NewsCard key={index} newsItem={item} />
+          ))}
+        </NewsCardsContainer>
+      </InfiniteScroll>
+    </>
   );
 };
 
