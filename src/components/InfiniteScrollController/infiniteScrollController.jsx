@@ -32,9 +32,9 @@ const InfiniteScrollController = () => {
 
   const fetchNews = () => {
     const payload = {
-      param: currentKeyword,
-      start: start,
-      display: display,
+      keyword: currentKeyword,
+      offset: start,
+      limit: display,
     };
     dispatch(getNewsByParam(payload));
     if (status === "succeeded") {

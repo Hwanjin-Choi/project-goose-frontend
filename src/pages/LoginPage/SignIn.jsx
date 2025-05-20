@@ -53,7 +53,7 @@ const Signin = () => {
       const result = await loginApi(userData);
       console.log("서버 응답:", result);
 
-      const { accessToken, refreshToken } = result.data.data;
+      const { accessToken, refreshToken } = result.data.data.tokenInfo;
 
       dispatch(setToken({ accessToken, refreshToken }));
 
