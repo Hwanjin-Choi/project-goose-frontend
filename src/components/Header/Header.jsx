@@ -310,6 +310,7 @@ const Header = () => {
 
   const handleSearch = (term) => {
     if (term.trim() !== "") {
+      console.log("hi");
       dispatch(setKeyword(term));
       onNavigate("/view-news");
     }
@@ -367,7 +368,7 @@ const Header = () => {
               </UserButton>
               {isDropdownOpen && (
                 <DropdownMenu>
-                  {isMobile && ( // 모바일 드롭다운 메뉴 구성은 전하의 코드 유지
+                  {isMobile && (
                     <>
                       <DropdownSearchWrapper>
                         <MainSearchInput
