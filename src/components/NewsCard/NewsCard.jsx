@@ -172,6 +172,15 @@ const ModalMessage = styled.div`
   max-width: 100%;
 `;
 
+const ModalTitle = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: inline-block;
+  width: 100%;
+`;
+
 // 날짜 포맷팅 유틸리티 함수
 const formatDate = (dateString) => {
   if (!dateString) return "날짜 정보 없음";
@@ -207,7 +216,13 @@ const NewsCard = ({ newsItem }) => {
     if (isScrapped) {
       setModalContent({
         title: "스크랩 취소",
-        message: `"${plainTitle}" 기사의 스크랩을 취소하시겠습니까?`,
+        message: (
+          <div>
+            <ModalTitle>{plainTitle}</ModalTitle>
+            <br />
+            <span>기사의 스크랩을 취소하시겠습니까?</span>
+          </div>
+        ),
         icon: faExclamationTriangle,
         iconColor: "#f0ad4e",
         onConfirm: () => confirmScrapAction(false, plainTitle),
@@ -217,7 +232,13 @@ const NewsCard = ({ newsItem }) => {
     } else {
       setModalContent({
         title: "기사 스크랩",
-        message: `"${plainTitle}" 기사를 스크랩하시겠습니까?`,
+        message: (
+          <div>
+            <ModalTitle>{plainTitle}</ModalTitle>
+            <br />
+            <span>기사를 스크랩하시겠습니까?</span>
+          </div>
+        ),
         icon: faSolidBookmark,
         iconColor: "#5a6fd8",
         onConfirm: () => confirmScrapAction(true, plainTitle),
