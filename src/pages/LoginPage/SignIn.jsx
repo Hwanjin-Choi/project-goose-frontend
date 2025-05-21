@@ -26,13 +26,6 @@ const Signin = () => {
     password: "",
   });
 
-  const [modal, setModal] = useState({
-    show: false,
-    message: "",
-    buttonText: "확인",
-    onConfirm: () => {},
-  });
-
   const con = async (e) => {
     e.preventDefault();
 
@@ -41,49 +34,36 @@ const Signin = () => {
       password: "",
     });
 
-    let formIsValid = true;
+    let noinform = true;
     const newErrors = {};
 
     if (!userData.username) {
-      formIsValid = false;
+      noinform = false;
       newErrors.username = "아이디를 입력해야합니다.";
     }
     if (!userData.password) {
-      formIsValid = false;
+      noinform = false;
       newErrors.password = "비밀번호를 입력해야합니다.";
     }
     setErrors(newErrors);
 
-    if (formIsValid) {
-      try {
-        const result = await loginApi(userData);
-        console.log("서버 응답:", result);
+    if (!noinform) return;
 
-        const { username, memberId, nickname } = result.data.data.userInfo;
-        const { accessToken, refreshToken } = result.data.data.tokenInfo;
+    try {
+      const result = await loginApi(userData);
+      console.log("서버 응답:", result);
 
-        dispatch(setToken({ accessToken, refreshToken, nickname }));
+      const { accessToken, refreshToken } = result.data.data;
 
-        localStorage.setItem("nickname", nickname);
-        localStorage.setItem("accessToken", accessToken);
-        localStorage.setItem("refreshToken", refreshToken);
+      dispatch(setToken({ accessToken, refreshToken }));
 
-        console.log(username);
-        console.log(memberId);
-        console.log(nickname);
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
 
-        navigate("/");
-      } catch (error) {
-        const errorMsg = error?.response?.data?.message || error.message;
-        setModal({
-          show: true,
-          message: errorMsg,
-          buttonText: "돌아가기",
-          onConfirm: () => {
-            setModal((prev) => ({ ...prev, show: false }));
-          },
-        });
-      }
+      navigate("/");
+    } catch (error) {
+      console.error("로그인 실패:", error);
+      alert("아이디 또는 비밀번호가 틀렸습니다.");
     }
   };
 
@@ -136,16 +116,6 @@ const Signin = () => {
           </div>
         </div>
       </div>
-      {modal.show && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <p>{modal.message}</p>
-            <button className="modal-button" onClick={modal.onConfirm}>
-              {modal.buttonText}
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
