@@ -6,7 +6,6 @@ import InfiniteScrollController from "../../components/InfiniteScrollController/
 import { useSelector, useDispatch } from "react-redux";
 import { setKeyword } from "../../redux/keyword/keywordSlice";
 import useMobileDetect from "../../hook/useMobileDetect";
-
 // 페이지 전체를 감싸는 Wrapper
 const ViewNewsPageWrapper = styled.div`
   display: flex;

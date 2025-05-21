@@ -2,19 +2,17 @@ import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 // localStorage 저장
 import storage from "redux-persist/lib/storage";
-import userReducer from "./userSlice"; // 슬라이스에서 default로 export한 reducer
 import keywordSlice from "./keyword/keywordSlice";
 import newsSlice from "./news/newsSlice";
-import registrationSlice from "./registration/registrationSlice";
+// import registrationSlice from "./registration/registrationSlice";
 import { combineReducers } from "redux";
 import tokenSlice from "./tokenSlice";
 
 // 여러 리듀서를 합치는 경우 (지금은 하나지만 확장성 고려)
 const rootReducer = combineReducers({
-  user: userReducer,
   keyword: keywordSlice,
   news: newsSlice,
-  registration: registrationSlice,
+  // registration: registrationSlice,
   token: tokenSlice,
 });
 

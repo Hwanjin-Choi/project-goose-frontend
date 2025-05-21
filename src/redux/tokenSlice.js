@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  nickname: "",
   accessToken: "",
   refreshToken: "",
   isExpired: false,
@@ -11,12 +12,14 @@ const tokenSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
+      state.nickname = action.payload.nickname;
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
       state.isAuthenticated = true;
       state.isExpired = false;
     },
     logout: (state) => {
+      state.nickname = "";
       state.accessToken = "";
       state.refreshToken = "";
 
