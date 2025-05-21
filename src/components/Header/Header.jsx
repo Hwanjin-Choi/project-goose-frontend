@@ -7,6 +7,7 @@ import {
   faBars,
   faFeatherAlt,
   faSignOutAlt,
+  faUserCircle,
   faBookmark,
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
@@ -404,6 +405,16 @@ const Header = () => {
                   >
                     <FontAwesomeIcon icon={faSignOutAlt} />
                     로그아웃
+                  </DropdownItem>
+
+                  <DropdownItem
+                    onClick={() => {
+                      onNavigate("/my-page");
+                      setIsDropdownOpen(false);
+                    }}
+                  >
+                    <FontAwesomeIcon icon={faUserCircle} />
+                    마이 페이지
                   </DropdownItem>
                 </DropdownMenu>
               )}

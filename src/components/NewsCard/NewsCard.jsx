@@ -8,6 +8,7 @@ import {
 import { faBookmark as faRegularBookmark } from "@fortawesome/free-regular-svg-icons"; // 빈 스크랩
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "../Modal/Modal";
+import { postScrapNews } from "../../api/Scrap/ScrapNews";
 
 const CardWrapper = styled.div`
   background: #ffffff;
@@ -164,6 +165,12 @@ const ScrapButton = styled.button`
     font-size: 0.95rem;
   }
 `;
+const ModalMessage = styled.div`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+`;
 
 // 날짜 포맷팅 유틸리티 함수
 const formatDate = (dateString) => {
@@ -223,6 +230,7 @@ const NewsCard = ({ newsItem }) => {
   const confirmScrapAction = (scrapStatus, plainTitle) => {
     setIsScrapped(scrapStatus);
     setIsModalOpen(false);
+    postScrapNews(title, originallink, link, description, pubDate);
     console.log(`"${plainTitle}" 기사 스크랩 ${scrapStatus ? "완료" : "취소"}`);
   };
 
@@ -277,7 +285,7 @@ const NewsCard = ({ newsItem }) => {
         icon={modalContent.icon}
         iconColor={modalContent.iconColor}
       >
-        {modalContent.message}
+        <ModalMessage>{modalContent.message}</ModalMessage>
       </Modal>
     </>
   );
