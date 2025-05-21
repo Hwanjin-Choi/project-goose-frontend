@@ -181,6 +181,18 @@ const ModalTitle = styled.span`
   width: 100%;
 `;
 
+const ErrorBanner = styled.div`
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  text-align: center;
+  font-size: 1rem;
+  border-radius: 5px;
+  margin: 10px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: ${({ visible }) => (visible ? "block" : "none")};
+`;
+
 // 날짜 포맷팅 유틸리티 함수
 const formatDate = (dateString) => {
   if (!dateString) return "날짜 정보 없음";
@@ -208,6 +220,7 @@ const NewsCard = ({ newsItem }) => {
     message: "",
     onConfirm: null,
   });
+  const [errorMessage, setErrorMessage] = useState(""); // 오류 메시지 상태
 
   // 스크랩 버튼 클릭 시 모달 열기
   const handleScrapButtonClick = (e) => {
@@ -251,8 +264,24 @@ const NewsCard = ({ newsItem }) => {
   const confirmScrapAction = (scrapStatus, plainTitle) => {
     setIsScrapped(scrapStatus);
     setIsModalOpen(false);
-    postScrapNews(title, originallink, link, description, pubDate);
-    console.log(`"${plainTitle}" 기사 스크랩 ${scrapStatus ? "완료" : "취소"}`);
+
+    setErrorMessage("");
+
+    postScrapNews(title, originallink, link, description, pubDate)
+      .then(() => {
+        setErrorMessage("");
+        console.log(
+          `"${plainTitle}" 기사 스크랩 ${scrapStatus ? "완료" : "취소"}`
+        );
+      })
+      .catch((error) => {
+        // 오류 발생 시 버튼 상태를 원래대로 되돌리기
+        setIsScrapped(!scrapStatus); // 상태 초기화
+        setErrorMessage(
+          "스크랩 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+        ); // 오류 메시지 설정
+        console.error("스크랩 처리 중 오류 발생:", error);
+      });
   };
 
   const handleCardClick = (e) => {
@@ -264,6 +293,8 @@ const NewsCard = ({ newsItem }) => {
 
   return (
     <>
+      <ErrorBanner visible={errorMessage !== ""}>{errorMessage}</ErrorBanner>
+
       <CardWrapper onClick={handleCardClick} style={{ cursor: "pointer" }}>
         <ThumbnailWrapper>
           <Thumbnail
