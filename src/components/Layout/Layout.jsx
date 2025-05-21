@@ -2,7 +2,7 @@
 import React from "react";
 import styled, { ThemeProvider } from "styled-components";
 import Header, { HEADER_HEIGHT } from "../Header/Header";
-
+import { useParams } from "react-router-dom";
 const theme = {
   maxWidth: "1200px",
 };
@@ -34,9 +34,10 @@ const MainContent = styled.main`
 `;
 
 const Layout = ({ children }) => {
+  const params = useParams();
+  console.log(params);
   return (
     <ThemeProvider theme={theme}>
-      {" "}
       <Header />
       <AppWrapper>
         <LayoutContainer>
