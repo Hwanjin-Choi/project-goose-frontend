@@ -9,9 +9,12 @@ export const keywordSlice = createSlice({
     setKeyword: (state, action) => {
       state.searchText = action.payload;
     },
+    clearKeyword: (state) => {
+      state.searchText = "";
+    },
   },
 });
 
-export const { setKeyword } = keywordSlice.actions;
+export const { setKeyword, clearKeyword } = keywordSlice.actions;
 
 export default keywordSlice.reducer;
