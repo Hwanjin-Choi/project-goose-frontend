@@ -1,13 +1,11 @@
-import React, { use, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import styled from "styled-components";
-import { NewsCard } from "../../components/NewsCard/NewsCard";
 import MainSearchInput from "../../components/MainSearchInput/MainSearchInput"; // MainSearchInput 임포트
 import { getNewsApi } from "../../api/News/fetchNews";
 import InfiniteScrollController from "../../components/InfiniteScrollController/InfiniteScrollController";
 import { useSelector, useDispatch } from "react-redux";
 import { setKeyword } from "../../redux/keyword/keywordSlice";
 import useMobileDetect from "../../hook/useMobileDetect";
-
 // 페이지 전체를 감싸는 Wrapper
 const ViewNewsPageWrapper = styled.div`
   display: flex;
@@ -50,7 +48,9 @@ const ViewNewsPage = () => {
     dispatch(setKeyword(query));
     const res = await getNewsApi();
   };
-
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   return (
     <ViewNewsPageWrapper>
       {isMobile && (

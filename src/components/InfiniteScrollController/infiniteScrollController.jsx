@@ -6,6 +6,8 @@ import { NewsCard } from "../NewsCard/NewsCard";
 import NewsCardSkeleton from "../NewsCardSkeleton/NewsCardSkeleton";
 import { useSelector, useDispatch } from "react-redux";
 import { getNewsByParam, resetNewsState } from "../../redux/news/newsSlice";
+import { useParams } from "react-router-dom";
+import { setKeyword } from "../../redux/keyword/keywordSlice";
 
 const NewsCardsContainer = styled.div`
   display: flex;
@@ -29,12 +31,13 @@ const InfiniteScrollController = () => {
   const [start, setStart] = useState(NEWS_START_INDEX);
   const [display, setDisplay] = useState(NEWS_DISPLAY_INDEX);
   const dispatch = useDispatch();
+  const params = useParams();
 
   const fetchNews = () => {
     const payload = {
-      param: currentKeyword,
-      start: start,
-      display: display,
+      keyword: currentKeyword,
+      offset: start,
+      limit: display,
     };
     dispatch(getNewsByParam(payload));
     if (status === "succeeded") {
@@ -45,7 +48,14 @@ const InfiniteScrollController = () => {
   useEffect(() => {
     dispatch(resetNewsState());
     fetchNews();
+    console.log(params);
   }, [currentKeyword]);
+
+  useEffect(() => {
+    if (params.keyword && params.keyword.length > 0) {
+      dispatch(setKeyword(params.keyword));
+    }
+  }, []);
 
   return (
     <>

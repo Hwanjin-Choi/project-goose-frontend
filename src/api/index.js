@@ -1,5 +1,7 @@
 import axios from "axios";
 import qs from "qs";
+import { store } from "../redux/store"; // Redux 스토어를 직접 import 합니다.
+import { login, logout } from "../redux/tokenSlice";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 const apiClient = axios.create({
@@ -16,7 +18,7 @@ const apiClient = axios.create({
 // --- 요청 인터셉터 ---
 apiClient.interceptors.request.use(
   (config) => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = store.getState().token.accessToken; // 스토어에서 직접 accessToken 가져오기
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
@@ -26,7 +28,7 @@ apiClient.interceptors.request.use(
     return Promise.reject(error);
   }
 );
-// 만료된 토큰 시 아래를 컨트롤
+
 let isRefreshing = false;
 let failedQueue = [];
 
@@ -42,9 +44,8 @@ const processQueue = (error, token = null) => {
 };
 
 const handleLogoutForInterceptor = () => {
-  /*   localStorage.removeItem("accessToken");
-  localStorage.removeItem("refreshToken"); */
-  // window.location.href = '/login';
+  store.dispatch(logout());
+  window.location.href = "/expired-page";
   console.error("User logged out from interceptor due to token issues.");
 };
 
@@ -52,17 +53,18 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const currentRefreshToken = store.getState().token.refreshToken;
+
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
       originalRequest.url !== "/members/refresh"
     ) {
-      if (
-        error.response.data?.message === "로그아웃된 토큰입니다." ||
-        error.response.data?.message === "인증이 필요합니다."
-      ) {
-        console.warn("Token invalid.");
-        console.log(error.response.data);
+      if (error.response.data?.message === "로그아웃된 토큰입니다.") {
+        console.warn(
+          "Token invalid, performing logout:",
+          error.response.data.message
+        );
         handleLogoutForInterceptor();
         return Promise.reject(
           new Error(
@@ -76,24 +78,20 @@ apiClient.interceptors.response.use(
           failedQueue.push({ resolve, reject });
         })
           .then((newAccessToken) => {
-            if (newAccessToken) {
-              originalRequest.headers[
-                "Authorization"
-              ] = `Bearer ${newAccessToken}`;
-              return apiClient(originalRequest);
-            }
-            return Promise.reject(
-              new Error("Failed to get new access token while refreshing.")
-            );
+            originalRequest.headers[
+              "Authorization"
+            ] = `Bearer ${newAccessToken}`;
+            return apiClient(originalRequest);
           })
-          .catch((err) => Promise.reject(err));
+          .catch((err) => {
+            return Promise.reject(err);
+          });
       }
 
       originalRequest._retry = true;
       isRefreshing = true;
-      const refreshToken = localStorage.getItem("refreshToken");
 
-      if (!refreshToken) {
+      if (!currentRefreshToken) {
         isRefreshing = false;
         processQueue(new Error("Refresh token not found."), null);
         handleLogoutForInterceptor();
@@ -103,24 +101,46 @@ apiClient.interceptors.response.use(
       }
 
       try {
+        console.log("Attempting to refresh token...");
         const refreshResponse = await axios.post(
           `${API_BASE_URL}/members/refresh`,
-          { refreshToken },
+          { refreshToken: currentRefreshToken }, // 스토어에서 가져온 refreshToken 사용
           { headers: { "Content-Type": "application/json" } }
         );
-        const { accessToken: newAccessToken } = refreshResponse.data;
-        console.log(refreshResponse, "from handler");
-        if (!newAccessToken)
-          throw new Error("New access token not found in refresh response.");
 
-        localStorage.setItem("accessToken", newAccessToken);
-        apiClient.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${newAccessToken}`;
-        originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
-        processQueue(null, newAccessToken);
-        return apiClient(originalRequest);
+        const responseData = refreshResponse.data;
+
+        if (responseData && responseData.accessToken) {
+          const newAccessToken = responseData.accessToken;
+          console.log("New access token obtained:", newAccessToken);
+          // 스토어의 dispatch 사용
+          store.dispatch(
+            login({
+              accessToken: newAccessToken,
+              refreshToken: currentRefreshToken,
+            }) // refreshToken도 함께 업데이트하거나, 기존 값 유지
+          );
+          apiClient.defaults.headers.common[
+            "Authorization"
+          ] = `Bearer ${newAccessToken}`;
+          originalRequest.headers["Authorization"] = `Bearer ${newAccessToken}`;
+
+          processQueue(null, newAccessToken);
+          return apiClient(originalRequest);
+        } else {
+          console.error(
+            "New access token not found in refresh response:",
+            responseData
+          );
+          throw new Error(
+            "New access token not found or invalid response from refresh API."
+          );
+        }
       } catch (refreshError) {
+        console.error(
+          "Failed to refresh token:",
+          refreshError.response?.data || refreshError.message
+        );
         processQueue(refreshError, null);
         handleLogoutForInterceptor();
         const errMsg =

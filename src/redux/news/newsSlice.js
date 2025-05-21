@@ -17,7 +17,6 @@ export const getNewsByParam = createAsyncThunk(
   "news/news",
   async (payload, { rejectWithValue }) => {
     try {
-      console.log(payload);
       const response = await apiClient.get("/news", { params: payload });
       if (response.data && response.data.status === "SUCCESS") {
         return response.data;
@@ -52,9 +51,11 @@ const newsSlice = createSlice({
       })
       .addCase(getNewsByParam.fulfilled, (state, action) => {
         state.status = "succeeded";
-        console.log(action.payload.data, "redux slice calling");
+
         const responseItem = action.payload.data;
-        state.newsList = [...state.newsList, ...responseItem.items];
+
+        state.newsList = [...state.newsList, ...responseItem.items]; // 수정된 아이템 리스트를 기존 리스트에 병합합니다.
+
         if (responseItem.total > state.newsList.length) {
           state.hasMore = true;
         } else {

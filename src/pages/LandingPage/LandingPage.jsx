@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MainSearchInput from "../../components/MainSearchInput/MainSearchInput";
 import styled from "styled-components";
 import Goose from "../../assets/Goose.png";
 import PackedBubbleChart from "../../components/WordCloud/WordCloud";
 import { setKeyword } from "../../redux/keyword/keywordSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import useMobileDetect from "../../hook/useMobileDetect";
 
 const LandingPageContainer = styled.div`
@@ -52,12 +52,12 @@ const sampleData = [
 
 const LandingPage = () => {
   const currentKeyword = useSelector((state) => state.keyword.searchText);
-  const [searchTerm, setSearchTerm] = useState(currentKeyword);
 
   const dispatch = useDispatch();
   const naviagte = useNavigate();
+  const params = useParams();
   const isMobile = useMobileDetect();
-
+  const [searchTerm, setSearchTerm] = useState(params.keyword);
   const handleInputChange = (event) => {
     setSearchTerm(event.target.value);
     /* dispatch(setKeyword(event.target.value)); */
@@ -65,8 +65,12 @@ const LandingPage = () => {
 
   const handleSearch = (query) => {
     dispatch(setKeyword(query));
-    naviagte(`/view-news`);
+    naviagte(`/view-news/${query}`);
   };
+
+  useEffect(() => {
+    setSearchTerm(params.keyword);
+  }, [params.keyword]);
 
   return (
     <LandingPageContainer>
