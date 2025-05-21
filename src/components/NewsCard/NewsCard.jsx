@@ -18,7 +18,7 @@ const CardWrapper = styled.div`
   overflow: hidden;
   width: 100%;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-
+  margin-top: 20px;
   &:hover {
     transform: translateY(-5px);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
@@ -238,7 +238,7 @@ const NewsCard = ({ newsItem }) => {
       <CardWrapper onClick={handleCardClick} style={{ cursor: "pointer" }}>
         <ThumbnailWrapper>
           <Thumbnail
-            src={imageUrl}
+            src={newsItem.imageUrl ? newsItem.imageUrl : imageUrl}
             alt={`${title.replace(/<\/?b>/g, "")} 썸네일`}
             onError={(e) => {
               e.target.onerror = null;

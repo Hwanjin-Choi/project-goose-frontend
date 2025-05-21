@@ -61,6 +61,7 @@ const newsSlice = createSlice({
         } else {
           state.hasMore = false;
         }
+        state.totalCount = responseItem.total;
         state.error = null;
       })
       .addCase(getNewsByParam.rejected, (state, action) => {
