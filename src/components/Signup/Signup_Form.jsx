@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import SignUp_Submit_Btn from "./SignUp_Submit_Btn";
-import GoToButton from "./GoToButton";
-import { handleSubmit } from "./useHandleSubmit";
+import GoToButton from "./GoToLoginButton";
+import ReusableModal from "./ReusableModal";
+import { useNavigate } from "react-router-dom";
+import { SignUp } from "../../api/SignUp/signUpApi";
 
 const FormWrapper = styled.div`
+  position: relative;
   width: 400px;
   margin: 50px auto;
   padding: 40px;
@@ -88,11 +91,20 @@ const CheckboxWrapper = styled.div`
 `;
 
 const SignUp_Form = () => {
+  const navigate = useNavigate();
+
+  const [modal, setModal] = useState({
+    show: false,
+    message: "",
+    buttonText: "확인",
+    onConfirm: () => {},
+  });
+
   const [userData, setUserData] = useState({
     username: "",
     password: "",
     nickname: "",
-    isAdmin: false,
+    admin: false,
   });
 
   const [errors, setErrors] = useState({
@@ -103,71 +115,134 @@ const SignUp_Form = () => {
 
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
-
     setUserData((prev) => ({
       ...prev,
       [id]: type === "checkbox" ? checked : value,
     }));
   };
 
+  const handleSubmit = async () => {
+    setErrors({ username: "", password: "", nickname: "" });
+
+    let formIsValid = true;
+    const newErrors = {};
+
+    if (!userData.username) {
+      formIsValid = false;
+      newErrors.username = "아이디 값이 필요합니다.";
+    }
+    if (!userData.password) {
+      formIsValid = false;
+      newErrors.password = "비밀번호 값이 필요합니다.";
+    }
+    if (!userData.nickname) {
+      formIsValid = false;
+      newErrors.nickname = "닉네임 값이 필요합니다.";
+    }
+
+    setErrors(newErrors);
+
+    if (formIsValid) {
+      try {
+        await SignUp(userData);
+        // 회원가입 성공 모달 설정
+        setModal({
+          show: true,
+          message: "회원가입이 완료되었습니다.",
+          buttonText: "로그인하러 가기",
+          onConfirm: () => {
+            setModal({ ...modal, show: false });
+            navigate("/login");
+          },
+        });
+      } catch (error) {
+        // 회원가입 실패 모달 설정
+        const errorMsg =
+          error?.response?.data?.message ||
+          error.message ||
+          "회원가입에 실패했습니다.";
+        setModal({
+          show: true,
+          message: errorMsg,
+          buttonText: "닫기",
+          onConfirm: () => {
+            setModal((prev) => ({ ...prev, show: false }));
+          },
+        });
+      }
+    }
+  };
+
   const onSubmit = (e) => {
     e.preventDefault();
-    handleSubmit({ userData, setErrors });
+    handleSubmit();
   };
 
   return (
-    <FormWrapper>
-      <GoToButton to="/login" />
-      <FormTitle>회원 가입</FormTitle>
+    <>
+      <FormWrapper>
+        <GoToButton to="/login" />
+        <FormTitle>회원 가입</FormTitle>
 
-      <InputWrapper>
-        <Input
-          type="text"
-          id="username"
-          value={userData.username}
-          onChange={handleChange}
-          required
+        {/* 입력 필드들 */}
+        <InputWrapper>
+          <Input
+            type="text"
+            id="username"
+            value={userData.username}
+            onChange={handleChange}
+            required
+          />
+          <Label htmlFor="username">ID</Label>
+          {errors.username && <ErrorMessage>{errors.username}</ErrorMessage>}
+        </InputWrapper>
+
+        <InputWrapper>
+          <Input
+            type="password"
+            id="password"
+            value={userData.password}
+            onChange={handleChange}
+            required
+          />
+          <Label htmlFor="password">Password</Label>
+          {errors.password && <ErrorMessage>{errors.password}</ErrorMessage>}
+        </InputWrapper>
+
+        <InputWrapper>
+          <Input
+            type="text"
+            id="nickname"
+            value={userData.nickname}
+            onChange={handleChange}
+            required
+          />
+          <Label htmlFor="nickname">Nickname</Label>
+          {errors.nickname && <ErrorMessage>{errors.nickname}</ErrorMessage>}
+        </InputWrapper>
+
+        <CheckboxWrapper>
+          <input
+            type="checkbox"
+            id="admin"
+            checked={userData.admin}
+            onChange={handleChange}
+          />
+          <label htmlFor="admin">관리자 권한</label>
+        </CheckboxWrapper>
+
+        <SignUp_Submit_Btn onClick={onSubmit} />
+      </FormWrapper>
+
+      {/* 모달 렌더 */}
+      {modal.show && (
+        <ReusableModal
+          message={modal.message}
+          buttonText={modal.buttonText}
+          onConfirm={modal.onConfirm}
         />
-        <Label htmlFor="username">ID</Label>
-        {errors.username && <ErrorMessage>{errors.username}</ErrorMessage>}
-      </InputWrapper>
-
-      <InputWrapper>
-        <Input
-          type="password"
-          id="password"
-          value={userData.password}
-          onChange={handleChange}
-          required
-        />
-        <Label htmlFor="password">Password</Label>
-        {errors.password && <ErrorMessage>{errors.password}</ErrorMessage>}
-      </InputWrapper>
-
-      <InputWrapper>
-        <Input
-          type="text"
-          id="nickname"
-          value={userData.nickname}
-          onChange={handleChange}
-          required
-        />
-        <Label htmlFor="nickname">Nickname</Label>
-        {errors.nickname && <ErrorMessage>{errors.nickname}</ErrorMessage>}
-      </InputWrapper>
-
-      <CheckboxWrapper>
-        <input
-          type="checkbox"
-          id="isAdmin"
-          checked={userData.isAdmin}
-          onChange={handleChange}
-        />
-        <label htmlFor="isAdmin">관리자 권한</label>
-      </CheckboxWrapper>
-
-      <SignUp_Submit_Btn onClick={onSubmit} />
-    </FormWrapper>
+      )}
+    </>
   );
 };
 

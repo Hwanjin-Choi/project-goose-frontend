@@ -26,6 +26,13 @@ const Signin = () => {
     password: "",
   });
 
+  const [modal, setModal] = useState({
+    show: false,
+    message: "",
+    buttonText: "확인",
+    onConfirm: () => {},
+  });
+
   const con = async (e) => {
     e.preventDefault();
 
@@ -34,36 +41,49 @@ const Signin = () => {
       password: "",
     });
 
-    let noinform = true;
+    let formIsValid = true;
     const newErrors = {};
 
     if (!userData.username) {
-      noinform = false;
+      formIsValid = false;
       newErrors.username = "아이디를 입력해야합니다.";
     }
     if (!userData.password) {
-      noinform = false;
+      formIsValid = false;
       newErrors.password = "비밀번호를 입력해야합니다.";
     }
     setErrors(newErrors);
 
-    if (!noinform) return;
+    if (formIsValid) {
+      try {
+        const result = await loginApi(userData);
+        console.log("서버 응답:", result);
 
-    try {
-      const result = await loginApi(userData);
-      console.log("서버 응답:", result);
+        const { username, memberId, nickname } = result.data.data.userInfo;
+        const { accessToken, refreshToken } = result.data.data.tokenInfo;
 
-      const { accessToken, refreshToken } = result.data.data.tokenInfo;
+        dispatch(setToken({ accessToken, refreshToken, nickname }));
 
-      dispatch(setToken({ accessToken, refreshToken }));
+        localStorage.setItem("nickname", nickname);
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
 
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+        console.log(username);
+        console.log(memberId);
+        console.log(nickname);
 
-      navigate("/");
-    } catch (error) {
-      console.error("로그인 실패:", error);
-      alert("아이디 또는 비밀번호가 틀렸습니다.");
+        navigate("/");
+      } catch (error) {
+        const errorMsg = error?.response?.data?.message || error.message;
+        setModal({
+          show: true,
+          message: errorMsg,
+          buttonText: "돌아가기",
+          onConfirm: () => {
+            setModal((prev) => ({ ...prev, show: false }));
+          },
+        });
+      }
     }
   };
 
@@ -116,6 +136,16 @@ const Signin = () => {
           </div>
         </div>
       </div>
+      {modal.show && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <p>{modal.message}</p>
+            <button className="modal-button" onClick={modal.onConfirm}>
+              {modal.buttonText}
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

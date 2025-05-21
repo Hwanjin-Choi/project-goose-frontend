@@ -301,9 +301,13 @@ const Header = () => {
   const nickname = "문어체";
 
   const onLogin = () => {
+    setIsLoggedIn(true); // 추후 변경
+
     navigate("/login");
   };
-  const onLogout = () => {};
+  const onLogout = () => {
+    setIsLoggedIn(false);
+  };
   const onNavigate = (url) => {
     navigate(url);
   };
