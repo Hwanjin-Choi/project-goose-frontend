@@ -23,14 +23,15 @@ const SkeletonElement = styled.div`
 const SkeletonCardWrapper = styled.div`
   background: #ffffff;
   border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05); // 그림자는 조금 더 연하게
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   width: 100%;
-  margin-top: 20px;
-
-  @media (min-width: 768px) {
+  margin-top: 10px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 20px @media (min-width: 768px) {
     flex-direction: row;
   }
 `;
@@ -43,7 +44,8 @@ const SkeletonThumbnailWrapper = styled(SkeletonElement)`
   @media (min-width: 768px) {
     width: 280px;
     min-width: 280px;
-    height: 100%; // 부모 높이에 맞춤
+    height: 100%; /* ======== 수정된 부분: 'auto'에서 '100%'로 변경 ======== */
+    /* align-self: stretch; // height: 100%를 사용하므로, 이 속성은 필수는 아닐 수 있습니다. 필요에 따라 유지하거나 제거합니다. */
     border-radius: 16px 0 0 16px; // 왼쪽 모서리만 둥글게 (데스크탑 뷰)
   }
   border-radius: 16px 16px 0 0; // 모바일 뷰 상단 모서리
@@ -91,15 +93,14 @@ const SkeletonDescription = () => (
     <SkeletonDescriptionLine style={{ width: "100%" }} />
     <SkeletonDescriptionLine style={{ width: "90%" }} />
     <SkeletonDescriptionLine style={{ width: "70%" }} />
-    {/* 데스크탑에서 한 줄 더 보이도록 조건부 렌더링 (선택 사항) */}
-    {/* <MediaQuery minWidth={768}> (라이브러리 사용 시) */}
-    {/* <SkeletonDescriptionLine style={{ width: "60%" }} /> */}
-    {/* </MediaQuery> */}
-    {/* 또는 CSS 미디어쿼리로 제어 */}
     <SkeletonDescriptionLine
       className="desktop-only"
       style={{ width: "60%" }}
     />
+    {/* jsx="true" global="true" 속성은 styled-jsx에서 사용되나, 여기서는 styled-components를 사용 중이므로 별도의 <style> 태그는 불필요합니다. 
+        미디어쿼리 제어는 styled-components의 @media 구문을 사용하는 것이 일반적입니다.
+        여기서는 className을 사용한 CSS제어를 유지하되, styled-components 방식으로 변경하는 것을 고려할 수 있습니다.
+        일단은 원래 코드의 구조를 유지합니다. */}
     <style jsx="true" global="true">{`
       .desktop-only {
         display: none;
@@ -118,7 +119,7 @@ const SkeletonFooter = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: 16px; // 실제 Footer의 margin-top: auto를 고려하여 적절한 값
+  margin-top: 16px;
 
   @media (min-width: 768px) {
     margin-top: 20px;
@@ -128,7 +129,7 @@ const SkeletonFooter = styled.div`
 // PublishDate에 대응하는 스켈레톤
 const SkeletonPublishDate = styled(SkeletonElement)`
   width: 30%;
-  height: 0.8rem; // PublishDate의 font-size와 유사하게
+  height: 0.8rem;
 
   @media (min-width: 768px) {
     height: 0.85rem;
@@ -137,9 +138,9 @@ const SkeletonPublishDate = styled(SkeletonElement)`
 
 // ScrapButton에 대응하는 스켈레톤
 const SkeletonScrapButton = styled(SkeletonElement)`
-  width: 80px; // ScrapButton의 대략적인 너비
-  height: 36px; // ScrapButton의 대략적인 높이 (padding 고려)
-  border-radius: 20px; // ScrapButton의 border-radius
+  width: 80px;
+  height: 36px;
+  border-radius: 20px;
 
   @media (min-width: 768px) {
     width: 100px;
