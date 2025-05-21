@@ -153,7 +153,7 @@ const PackedBubbleChart = ({ dataFromServer }) => {
         console.log("버블 클릭됨:", d.data);
         const keyword = d.data.name;
         dispatch(setKeyword(keyword));
-        navigate(`/view-news`);
+        navigate(`/view-news/${keyword}`);
       });
 
     node

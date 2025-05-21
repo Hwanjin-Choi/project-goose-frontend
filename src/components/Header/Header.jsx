@@ -9,12 +9,12 @@ import {
   faSignOutAlt,
   faBookmark,
 } from "@fortawesome/free-solid-svg-icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Goose from "../../assets/Goose_header.svg";
 import { useSelector, useDispatch } from "react-redux";
 import useMobileDetect from "../../hook/useMobileDetect";
 import { setKeyword } from "../../redux/keyword/keywordSlice";
-
+import { logout } from "../../redux/tokenSlice";
 const HEADER_HEIGHT = "68px";
 
 // Styled Components 정의
@@ -286,24 +286,24 @@ const MainSearchInput = ({
 
 // Header 컴포넌트
 const Header = () => {
+  const params = useParams();
   const currentKeyword = useSelector((state) => state.keyword.searchText);
-  const dispatch = useDispatch();
-  const [searchTerm, setSearchTerm] = useState(currentKeyword);
+  const isAuthenticated = useSelector((state) => state.token.isAuthenticated);
+  const [searchTerm, setSearchTerm] = useState(params.keyword);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const isMobile = useMobileDetect();
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated);
 
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const nickname = "문어체";
 
   const onLogin = () => {
-    setIsLoggedIn(true);
+    navigate("/login");
   };
-  const onLogout = () => {
-    setIsLoggedIn(false);
-  };
+  const onLogout = () => {};
   const onNavigate = (url) => {
     navigate(url);
   };
@@ -311,14 +311,14 @@ const Header = () => {
   const handleSearch = (term) => {
     if (term.trim() !== "") {
       console.log("hi");
-      dispatch(setKeyword(term));
-      onNavigate("/view-news");
+      onNavigate(`/view-news/${term}`);
     }
   };
 
   useEffect(() => {
-    setSearchTerm(currentKeyword);
-  }, [currentKeyword]);
+    console.log(params);
+    setSearchTerm(params.keyword);
+  }, [params]);
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
@@ -354,7 +354,7 @@ const Header = () => {
         </SearchWrapperDesktop>
 
         <UserActionsWrapper ref={dropdownRef}>
-          {isLoggedIn ? (
+          {isAuthenticated ? (
             <>
               <UserButton onClick={toggleDropdown}>
                 {isMobile ? (
