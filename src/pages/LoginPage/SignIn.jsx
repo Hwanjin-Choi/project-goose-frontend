@@ -57,7 +57,7 @@ const Signin = () => {
     if (formIsValid) {
       try {
         const result = await loginApi(userData);
-        console.log("서버 응답:", result);
+        // console.log("서버 응답:", result);
 
         const { username, memberId, nickname } = result.data.data.userInfo;
         const { accessToken, refreshToken } = result.data.data.tokenInfo;
