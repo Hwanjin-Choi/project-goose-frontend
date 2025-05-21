@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import styled from "styled-components";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // react-icons에서 아이콘을 임포트
+import { modifyInfo } from "../../api/MyPage/modify";
 
 const FormWrapper = styled.div`
   position: relative;
-  width: 400px;
+  width: 500px; /* 더 넓은 폼 영역 */
   margin: 50px auto;
-  padding: 40px;
+  padding: 50px; /* 폼 내부 여백을 넓혀서 더 넓어 보이게 */
   background-color: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
@@ -14,6 +16,7 @@ const FormWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  min-height: 600px; /* 폼 영역의 최소 높이 설정 */
 `;
 
 const FormTitle = styled.h2`
@@ -23,6 +26,14 @@ const FormTitle = styled.h2`
   margin-bottom: 30px;
   font-weight: bold;
   letter-spacing: 1px;
+`;
+
+const SectionTitle = styled.h3`
+  text-align: left;
+  font-size: 1.8rem;
+  color: #333;
+  margin-bottom: 20px;
+  font-weight: bold;
 `;
 
 const InputWrapper = styled.div`
@@ -75,6 +86,52 @@ const ErrorMessage = styled.p`
   margin-top: 5px;
 `;
 
+const TogglePasswordButton = styled.button`
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: #4caf50;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 0;
+`;
+
+const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+  margin-bottom: 20px;
+`;
+
+const ToggleSectionButton = styled.button`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 12px 20px;
+  background-color: #f0f0f0;
+  color: #333;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  transition: background-color 0.3s;
+
+  &:hover {
+    background-color: #e0e0e0;
+  }
+`;
+
+const ToggleIcon = styled.div`
+  transition: transform 0.3s;
+  ${(props) => props.isOpen && "transform: rotate(180deg);"}
+`;
+
 const MyPage = () => {
   const [formData, setFormData] = useState({
     currentPassword: "",
@@ -88,6 +145,11 @@ const MyPage = () => {
     nickname: "",
   });
 
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [isPasswordSectionOpen, setIsPasswordSectionOpen] = useState(false);
+  const [isNicknameSectionOpen, setIsNicknameSectionOpen] = useState(false);
+
   // 폼 값 변경 핸들러
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -97,10 +159,10 @@ const MyPage = () => {
     });
   };
 
-  // 폼 제출 핸들러
-  const handleSubmit = async (e) => {
+  // 비밀번호 변경 핸들러
+  const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    setErrors({ currentPassword: "", newPassword: "", nickname: "" });
+    setErrors({ currentPassword: "", newPassword: "" });
 
     let formIsValid = true;
     const newErrors = {};
@@ -113,6 +175,24 @@ const MyPage = () => {
       formIsValid = false;
       newErrors.newPassword = "새 비밀번호를 입력해주세요.";
     }
+
+    setErrors(newErrors);
+
+    if (formIsValid) {
+      // 서버로 비밀번호 변경 요청
+      console.log("비밀번호가 변경되었습니다.", formData);
+      modifyInfo(formData.currentPassword, formData.newPassword, null);
+    }
+  };
+
+  // 닉네임 변경 핸들러
+  const handleNicknameSubmit = async (e) => {
+    e.preventDefault();
+    setErrors({ nickname: "" });
+
+    let formIsValid = true;
+    const newErrors = {};
+
     if (!formData.nickname) {
       formIsValid = false;
       newErrors.nickname = "닉네임을 입력해주세요.";
@@ -121,8 +201,8 @@ const MyPage = () => {
     setErrors(newErrors);
 
     if (formIsValid) {
-      // 서버로 데이터를 전송하는 로직을 여기에 추가하세요.
-      console.log("폼이 제출되었습니다.", formData);
+      // 서버로 닉네임 변경 요청
+      modifyInfo(null, null, formData.nickname);
     }
   };
 
@@ -130,63 +210,116 @@ const MyPage = () => {
     <FormWrapper>
       <FormTitle>회원 정보 변경</FormTitle>
 
-      <form onSubmit={handleSubmit}>
-        <InputWrapper>
-          <Input
-            type="password"
-            id="currentPassword"
-            name="currentPassword"
-            value={formData.currentPassword}
-            onChange={handleChange}
-            required
-          />
-          <Label htmlFor="currentPassword">현재 비밀번호</Label>
-          {errors.currentPassword && (
-            <ErrorMessage>{errors.currentPassword}</ErrorMessage>
-          )}
-        </InputWrapper>
+      {/* 비밀번호 변경 토글 */}
+      <ToggleSectionButton
+        onClick={() => setIsPasswordSectionOpen(!isPasswordSectionOpen)}
+      >
+        <span>비밀번호 변경</span>
+        <ToggleIcon isOpen={isPasswordSectionOpen}>▼</ToggleIcon>
+      </ToggleSectionButton>
 
-        <InputWrapper>
-          <Input
-            type="password"
-            id="newPassword"
-            name="newPassword"
-            value={formData.newPassword}
-            onChange={handleChange}
-            required
-          />
-          <Label htmlFor="newPassword">새 비밀번호</Label>
-          {errors.newPassword && (
-            <ErrorMessage>{errors.newPassword}</ErrorMessage>
-          )}
-        </InputWrapper>
+      {isPasswordSectionOpen && (
+        <form>
+          <InputWrapper>
+            <Input
+              type={showCurrentPassword ? "text" : "password"}
+              id="currentPassword"
+              name="currentPassword"
+              value={formData.currentPassword}
+              onChange={handleChange}
+              required
+            />
+            <Label htmlFor="currentPassword">현재 비밀번호</Label>
+            <TogglePasswordButton
+              type="button"
+              onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+            >
+              {showCurrentPassword ? <FaEyeSlash /> : <FaEye />}
+            </TogglePasswordButton>
+            {errors.currentPassword && (
+              <ErrorMessage>{errors.currentPassword}</ErrorMessage>
+            )}
+          </InputWrapper>
 
-        <InputWrapper>
-          <Input
-            type="text"
-            id="nickname"
-            name="nickname"
-            value={formData.nickname}
-            onChange={handleChange}
-            required
-          />
-          <Label htmlFor="nickname">닉네임</Label>
-          {errors.nickname && <ErrorMessage>{errors.nickname}</ErrorMessage>}
-        </InputWrapper>
+          <InputWrapper>
+            <Input
+              type={showNewPassword ? "text" : "password"}
+              id="newPassword"
+              name="newPassword"
+              value={formData.newPassword}
+              onChange={handleChange}
+              required
+            />
+            <Label htmlFor="newPassword">새 비밀번호</Label>
+            <TogglePasswordButton
+              type="button"
+              onClick={() => setShowNewPassword(!showNewPassword)}
+            >
+              {showNewPassword ? <FaEyeSlash /> : <FaEye />}
+            </TogglePasswordButton>
+            {errors.newPassword && (
+              <ErrorMessage>{errors.newPassword}</ErrorMessage>
+            )}
+          </InputWrapper>
 
-        <button
-          type="submit"
-          style={{
-            padding: "10px 20px",
-            backgroundColor: "#4caf50",
-            color: "#fff",
-            borderRadius: "8px",
-            border: "none",
-          }}
-        >
-          정보 변경
-        </button>
-      </form>
+          <ButtonWrapper>
+            <button
+              type="submit"
+              style={{
+                padding: "10px 20px",
+                backgroundColor: "#4caf50",
+                color: "#fff",
+                borderRadius: "8px",
+                border: "none",
+              }}
+              onClick={handlePasswordSubmit}
+            >
+              비밀번호 변경
+            </button>
+          </ButtonWrapper>
+        </form>
+      )}
+
+      {/* 닉네임 변경 토글 */}
+      <ToggleSectionButton
+        onClick={() => setIsNicknameSectionOpen(!isNicknameSectionOpen)}
+      >
+        <span>닉네임 변경</span>
+        <ToggleIcon isOpen={isNicknameSectionOpen}>▼</ToggleIcon>
+      </ToggleSectionButton>
+
+      {isNicknameSectionOpen && (
+        <form>
+          <InputWrapper>
+            <Input
+              type="text"
+              id="nickname"
+              name="nickname"
+              value={formData.nickname}
+              onChange={handleChange}
+              required
+            />
+            <Label htmlFor="nickname">새 닉네임</Label>
+            {errors.nickname && <ErrorMessage>{errors.nickname}</ErrorMessage>}
+          </InputWrapper>
+
+          <ButtonWrapper>
+            <button
+              type="submit"
+              style={{
+                padding: "10px 20px",
+                backgroundColor: "#4caf50",
+                color: "#fff",
+                borderRadius: "8px",
+                border: "none",
+              }}
+              onClick={handleNicknameSubmit}
+            >
+              닉네임 변경
+            </button>
+          </ButtonWrapper>
+        </form>
+      )}
     </FormWrapper>
   );
 };

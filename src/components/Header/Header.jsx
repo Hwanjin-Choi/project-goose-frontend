@@ -321,7 +321,7 @@ const Header = () => {
   };
 
   useEffect(() => {
-    console.log(params);
+    //console.log(params);
     setSearchTerm(params.keyword);
   }, [params]);
 

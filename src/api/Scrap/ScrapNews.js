@@ -24,7 +24,7 @@ export const postScrapNews = async ({
     } else {
       throw new Error(
         response.data.message ||
-          "스크랩 요청에 실패했습니다. 잠시 후 다시 시도해주세요1."
+          "스크랩 요청에 실패했습니다. 잠시 후 다시 시도해주세요."
       );
     }
   } catch (error) {

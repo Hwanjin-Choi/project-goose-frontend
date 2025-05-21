@@ -32,10 +32,10 @@ export const handleSubmit = async ({ userData, setErrors }) => {
     try {
       const res = await SignUp(userData);
       console.log("회원가입 성공:", res);
-      return res; // 반환해서 외부에서 처리 가능하게
+      return res;
     } catch (error) {
       console.error("회원가입 에러:", error.message);
-      throw error; // 밖에서 모달 띄우기 등 추가 처리를 할 수 있게
+      throw error;
     }
   }
 };
