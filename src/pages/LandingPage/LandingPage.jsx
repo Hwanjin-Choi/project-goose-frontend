@@ -7,8 +7,8 @@ import { setKeyword } from "../../redux/keyword/keywordSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import useMobileDetect from "../../hook/useMobileDetect";
+import { getTrendingKeywordList } from "../../redux/trending/trendingSlice";
 import TrendingKeyword from "../../components/TrendingKeyword/TrendingKeyword";
-
 const LandingPageContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -85,6 +85,18 @@ const LandingPage = () => {
     setSearchTerm(params.keyword);
   }, [params.keyword]);
 
+  useEffect(() => {
+    const fetchTrendingKeyword = async () => {
+      try {
+        await dispatch(getTrendingKeywordList());
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchTrendingKeyword();
+  }, []);
+
   return (
     <LandingPageContainer>
       <StyledImage src={Goose} alt="Goose Logo" />
@@ -94,20 +106,6 @@ const LandingPage = () => {
         onSearch={handleSearch}
         placeholder="오늘의 뉴스는?"
       />
-
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          height: isMobile ? "calc(100vh - 260px)" : "calc(100vh - 360px)",
-          width: "100%",
-        }}
-      >
-        <WordCloudWrapper>
-          <PackedBubbleChart dataFromServer={sampleData} />
-        </WordCloudWrapper>
-      </div>
-
       <TrendingKeyword />
     </LandingPageContainer>
   );

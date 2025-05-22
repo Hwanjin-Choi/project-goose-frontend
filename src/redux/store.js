@@ -1,6 +1,9 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { persistStore, persistReducer } from "redux-persist";
 import { combineReducers } from "redux";
+
+import { injectStore } from "../api/index";
+
 // localStorage 저장
 import storage from "redux-persist/lib/storage";
 
@@ -39,6 +42,8 @@ export const store = configureStore({
       serializableCheck: false, // redux-persist 관련 경고 제거
     }),
 });
+
+injectStore(store); // 🔥 여기 한 줄 추가
 
 // persistor 생성
 export const persistor = persistStore(store);

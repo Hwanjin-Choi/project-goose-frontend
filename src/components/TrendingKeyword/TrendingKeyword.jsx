@@ -1,54 +1,87 @@
 import React, { useState, useEffect } from "react";
-import styled from "styled-components";
 
 import PackedBubbleChart from "../../components/WordCloud/WordCloud";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import useMobileDetect from "../../hook/useMobileDetect";
-// import { getTrendingKeywordList } from "../../redux/trending/trendingSlice";
+import styled, { keyframes } from "styled-components";
 
-const WordCloudWrapper = styled.div`
-  display: flex; // 내부 PackedBubbleChart가 flex 아이템처럼 동작하게 하기 위함 (선택적)
-  flex-direction: column; // 내부 PackedBubbleChart가 수직으로 공간을 채우도록
-  width: 100%;
-  flex-grow: 1; /* 부모 Flex 컨테이너(LandingPageContainer)에서 남은 수직 공간을 모두 차지 */
-  min-height: 0; /* flex 아이템이 콘텐츠 크기 때문에 부모를 넘어서는 것을 방지 (매우 중요!) */
-  border: 1px solid #eee;
-  position: "relative"; /* PackedBubbleChart 내부의 position:absolute 요소 기준점 */
-`;
-
-/* const TrendingKeywordContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height : ${isMobile} ? calc(100vh - 260px) : calc(100vh - 360px);
-`;
- */
+// 가변 높이를 위한 TrendingKeywordContainer 수정
 const TrendingKeywordContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center; /* 로딩 및 에러 메시지 중앙 정렬을 위해 추가 */
+  justify-content: center; /* 로딩 및 에러 메시지 중앙 정렬을 위해 추가 */
   width: 100%;
-  height: calc(100vh - 260px);
+  /* isMobile prop을 받아 높이를 동적으로 설정합니다. */
+  height: ${(props) =>
+    props.isMobile ? "calc(100vh - 260px)" : "calc(100vh - 360px)"};
+  text-align: center; /* 내부 텍스트 중앙 정렬 */
 `;
 
-const TrendingKeywordComponent = () => {
+// 로딩 스피너를 위한 keyframes 정의
+const spin = keyframes`
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+`;
+
+const Spinner = styled.div`
+  border: 4px solid #4a5568; /* 스피너 트랙 색상 (테두리 색상과 유사하게) */
+  border-top: 4px solid #cbd5e1; /* 스피너 활성 부분 색상 (텍스트 색상과 유사하게) */
+  border-radius: 50%;
+  width: 24px; /* 스피너 크기 */
+  height: 24px;
+  animation: ${spin} 1s linear infinite;
+  margin: 6px 0; /* 스피너를 수직 중앙에 위치시키기 위한 마진 (Pill 높이 고려) */
+`;
+const LoadingContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
+
+const LoadingText = styled.h4`
+  color: #555; /* 로딩 텍스트 색상 */
+`;
+
+// 에러 메시지 스타일링 (선택 사항)
+const ErrorMessage = styled.h4`
+  color: #d8000c; /* 에러 메시지 색상 */
+  background-color: #ffd2d2; /* 에러 메시지 배경색 */
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: 1px solid #d8000c;
+`;
+
+const TrendingKeyword = () => {
   const isMobile = useMobileDetect();
-  const dispatch = useDispatch();
+
+  const { status: trendingKeywordStatus, keywordList } = useSelector(
+    (state) => state.trending
+  );
 
   return (
     <>
+      {/* isMobile prop을 TrendingKeywordContainer에 전달합니다. */}
       <TrendingKeywordContainer isMobile={isMobile}>
-        {/* {trendingKeywordStatus === "loading" ? (
-          <h4> Loading </h4>
+        {trendingKeywordStatus === "loading" ? (
+          <LoadingContainer>
+            <Spinner />
+            <LoadingText>잠시만 기다려 주십시오...</LoadingText>
+          </LoadingContainer>
         ) : trendingKeywordStatus === "succeeded" ? (
-          <h4>Loaded</h4>
+          <PackedBubbleChart dataFromServer={keywordList} />
+        ) : trendingKeywordStatus === "failed" ? ( // 'failed' 상태를 명시적으로 처리
+          <ErrorMessage>
+            데이터를 불러오는 데 실패하였나이다. 다시 시도해 주십시오.
+          </ErrorMessage>
         ) : (
-          <h4>Error</h4>
-        )} */}
-        <h4>test</h4>
+          <ErrorMessage>알 수 없는 오류가 발생하였나이다.</ErrorMessage> // 예외적인 다른 상태 처리
+        )}
       </TrendingKeywordContainer>
     </>
   );
 };
 
-export default TrendingKeywordComponent;
+export default TrendingKeyword;
