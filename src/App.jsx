@@ -27,7 +27,7 @@ const App = () => {
 
             <Route path="/my-page" element={<MyPage />} />
 
-            <Route path="/scrap" element={<ViewScrapedNewsPage />} />
+            <Route path="/scrap/:keyword?" element={<ViewScrapedNewsPage />} />
             {/* <Route path="*" element={<NotFoundPage />} /> */}
           </Routes>
         </Layout>

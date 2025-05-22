@@ -17,7 +17,8 @@ export const getScrapedNewsByParam = createAsyncThunk(
   "news/scrapedNews",
   async (payload, { rejectWithValue }) => {
     try {
-      const response = await apiClient.get("/news/Scrap", { params: payload });
+      const response = await apiClient.get("/news/scrap", { params: payload });
+
       if (response.data && response.data.status === "SUCCESS") {
         return response.data;
       } else {
@@ -58,8 +59,8 @@ const scrapedNewsSlice = createSlice({
 
         state.scrapedNewsList = [
           ...state.scrapedNewsList,
-          ...responseItem.content,
-        ]; // 수정된 아이템 리스트를 기존 리스트에 병합합니다.
+          ...responseItem.items,
+        ];
 
         if (responseItem.total > state.scrapedNewsList.length) {
           state.hasMore = true;
