@@ -13,8 +13,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import Goose from "../../assets/Goose_header.svg";
 import { useSelector, useDispatch } from "react-redux";
 import useMobileDetect from "../../hook/useMobileDetect";
-import { setKeyword } from "../../redux/keyword/keywordSlice";
-import { logout } from "../../redux/token/tokenSlice";
 const HEADER_HEIGHT = "68px";
 
 // Styled Components 정의
@@ -289,7 +287,7 @@ const Header = () => {
   const params = useParams();
   const currentKeyword = useSelector((state) => state.keyword.searchText);
   const isAuthenticated = useSelector((state) => state.token.isAuthenticated);
-  const [searchTerm, setSearchTerm] = useState(params.keyword);
+  const [searchTerm, setSearchTerm] = useState(currentKeyword);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const isMobile = useMobileDetect();
   const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated);
@@ -314,15 +312,14 @@ const Header = () => {
 
   const handleSearch = (term) => {
     if (term.trim() !== "") {
-      console.log("hi");
       onNavigate(`/view-news/${term}`);
+    } else {
+      console.log("Empty detected");
     }
   };
-
   useEffect(() => {
-    console.log(params);
-    setSearchTerm(params.keyword);
-  }, [params]);
+    setSearchTerm(currentKeyword);
+  }, [params.keyword, currentKeyword]);
 
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
