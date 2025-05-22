@@ -4,7 +4,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa"; // react-icons에서 아이�
 import { modifyInfo } from "../../api/MyPage/modify";
 import { dispatch } from "d3";
 import { useDispatch } from "react-redux";
-import { updateNickname } from "../../redux/token/tokenSlice";
+import { updateNickname } from "../../redux/auth/authSlice";
 
 const FormWrapper = styled.div`
   position: relative;

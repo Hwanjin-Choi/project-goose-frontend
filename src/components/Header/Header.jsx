@@ -300,7 +300,7 @@ const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const nickname = useSelector((state) => state.token.nickname);
+  const nickname = useSelector((state) => state.auth.nickname);
 
   const onLogin = () => {
     //setIsLoggedIn(true); // 추후 변경

@@ -1,7 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import apiClient from "../../api";
+
 const initialState = {
-  nickname: "",
   accessToken: "",
   refreshToken: "",
   isExpired: false,
@@ -26,46 +25,38 @@ export const logoutUsingToken = createAsyncThunk(
   }
 );
 
-const tokenSlice = createSlice({
+const tokenSlicecopy = createSlice({
   name: "token",
   initialState,
   reducers: {
     login: (state, action) => {
-      state.nickname = action.payload.nickname;
       state.accessToken = action.payload.accessToken;
       state.refreshToken = action.payload.refreshToken;
-      state.isAuthenticated = true;
       state.isExpired = false;
+      state.isAuthenticated = true;
     },
     logout: (state) => {
-      state.nickname = "";
       state.accessToken = "";
       state.refreshToken = "";
       state.isExpired = true;
       state.isAuthenticated = false;
     },
     reset: (state) => {
-      state.nickname = initialState.nickname;
       state.accessToken = initialState.accessToken;
       state.refreshToken = initialState.refreshToken;
       state.isExpired = initialState.isExpired;
       state.isAuthenticated = initialState.isAuthenticated;
     },
-    updateNickname: (state, action) => {
-      state.nickname = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(logoutUsingToken.fulfilled, (state) => {
-        state.nickname = "";
         state.accessToken = "";
         state.refreshToken = "";
         state.isExpired = false;
         state.isAuthenticated = false;
       })
       .addCase(logoutUsingToken.rejected, (state) => {
-        state.nickname = "";
         state.accessToken = "";
         state.refreshToken = "";
         state.isExpired = false;
@@ -74,5 +65,5 @@ const tokenSlice = createSlice({
   },
 });
 
-export const { login, logout, reset, updateNickname } = tokenSlice.actions;
-export default tokenSlice.reducer;
+export const { login, logout, reset } = tokenSlicecopy.actions;
+export default tokenSlicecopy.reducer;
