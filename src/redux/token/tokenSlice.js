@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
-
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import apiClient from "../../api";
 const initialState = {
   nickname: "",
   accessToken: "",
@@ -7,6 +7,25 @@ const initialState = {
   isExpired: false,
   isAuthenticated: false,
 };
+
+export const logoutUsingToken = createAsyncThunk(
+  "token/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await apiClient.post("/members/logout");
+      if (response.data && response.status === 200) {
+        return response.data;
+      } else {
+        throw new Error(response.data.message || "로그인 실패");
+      }
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || error.message || "Login Failed";
+      return rejectWithValue(errorMessage);
+    }
+  }
+);
+
 const tokenSlice = createSlice({
   name: "token",
   initialState,
@@ -35,6 +54,23 @@ const tokenSlice = createSlice({
     updateNickname: (state, action) => {
       state.nickname = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(logoutUsingToken.fulfilled, (state) => {
+        state.nickname = "";
+        state.accessToken = "";
+        state.refreshToken = "";
+        state.isExpired = false;
+        state.isAuthenticated = false;
+      })
+      .addCase(logoutUsingToken.rejected, (state) => {
+        state.nickname = "";
+        state.accessToken = "";
+        state.refreshToken = "";
+        state.isExpired = false;
+        state.isAuthenticated = false;
+      });
   },
 });
 

@@ -15,7 +15,7 @@ import Goose from "../../assets/Goose_header.svg";
 import { useSelector, useDispatch } from "react-redux";
 import useMobileDetect from "../../hook/useMobileDetect";
 import { store } from "../../redux/store";
-import { logoutUser } from "../../redux/auth/authSlice";
+import { logoutUsingToken } from "../../redux/token/tokenSlice";
 
 const HEADER_HEIGHT = "68px";
 
@@ -309,9 +309,7 @@ const Header = () => {
   };
 
   const onLogout = async () => {
-    await dispatch(logoutUser());
-
-    //setIsLoggedIn(false);
+    dispatch(logoutUsingToken());
     navigate("/");
   };
   const onNavigate = (url) => {

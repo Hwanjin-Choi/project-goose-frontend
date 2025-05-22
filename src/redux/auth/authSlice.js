@@ -19,8 +19,6 @@ export const loginUser = createAsyncThunk(
     try {
       const response = await apiClient.post("/members/login", credentials);
       const { accessToken, refreshToken, username } = response.data.data;
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
 
       return { accessToken, refreshToken, username };
     } catch (error) {
@@ -93,6 +91,7 @@ const authSlice = createSlice({
         state.error = null;
       })
       .addCase(logoutUser.rejected, (state, action) => {
+        console.log(action.payload);
         state.status = "failed";
         state.isAuthenticated = false;
         state.accessToken = null;
