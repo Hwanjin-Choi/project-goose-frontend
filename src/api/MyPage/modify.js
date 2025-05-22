@@ -11,31 +11,30 @@ export const modifyInfo = async ({
       newPassword,
       nickname,
     });
-    console.log();
-    // if (
-    //   response.data &&
-    //   (response.data.status === "SUCCESS" || response.status === 200)
-    // ) {
-    //   console.log("회원정보 수정 성공! :" + response.data);
-    //   return response.data;
-    // } else {
-    //   throw new Error(
-    //     response.data.message ||
-    //       "회원정보 수정에 실패했습니다. 잠시 후 다시 시도해주세요."
-    //   );
-    // }
-  } catch (error) {
-    if (error.response && error.response.data && error.response.data.error) {
-      const errorMessage = error.response.data.message;
-      console.error("회원정보 수정 실패:", errorMessage);
-      throw new Error(errorMessage);
-    } else if (error.request) {
-      throw new Error(
-        "서버로부터 응답을 받지 못했습니다. 네트워크 상태를 확인해주세요."
-      );
+
+    if (
+      response.data &&
+      (response.data.status === "SUCCESS" || response.status === 200)
+    ) {
+      console.log("회원정보 수정 성공!", response.data);
+      return response.data;
     } else {
-      console.error("스크랩 요청 실패:", error);
-      throw new Error("스크랩 요청에 실패했습니다. 잠시 후 다시 시도해주세요.");
+      throw new Error(response.data.message || "수정 실패");
+    }
+  } catch (error) {
+    if (error.response) {
+      const message =
+        error.response.data ||
+        error.response.data?.message ||
+        "요청 처리 중 오류가 발생했습니다.";
+      console.error("회원정보 수정 실패:", message);
+      throw new Error(message);
+    } else if (error.request) {
+      console.error("회원정보 수정 실패: 서버 응답 없음");
+      throw new Error("서버로부터 응답이 없습니다.");
+    } else {
+      console.error("회원정보 수정 실패:", error.message);
+      throw new Error(error.message || "알 수 없는 에러가 발생했습니다.");
     }
   }
 };

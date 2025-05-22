@@ -134,9 +134,9 @@ const ToggleIcon = styled.div`
 
 const MyPage = () => {
   const [formData, setFormData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    nickname: "",
+    currentPassword: null,
+    newPassword: null,
+    nickname: null,
   });
 
   const [errors, setErrors] = useState({
@@ -169,7 +169,7 @@ const MyPage = () => {
 
     if (!formData.currentPassword) {
       formIsValid = false;
-      newErrors.currentPassword = "현재 비밀번호를 입력해주세요.";
+      newErrors.currentPassword = "비밀번호를 입력해주세요.";
     }
     if (!formData.newPassword) {
       formIsValid = false;
@@ -179,9 +179,22 @@ const MyPage = () => {
     setErrors(newErrors);
 
     if (formIsValid) {
-      // 서버로 비밀번호 변경 요청
-      console.log("비밀번호가 변경되었습니다.", formData);
-      modifyInfo(formData.currentPassword, formData.newPassword, null);
+      try {
+        const response = await modifyInfo({
+          currentPassword: formData.currentPassword,
+          newPassword: formData.newPassword,
+          nickname: null,
+        });
+
+        alert("비밀번호가 성공적으로 변경되었습니다.");
+        setFormData({
+          ...formData,
+          currentPassword: "",
+          newPassword: "",
+        });
+      } catch (error) {
+        alert(error.message || "비밀번호 변경 중 오류가 발생했습니다.");
+      }
     }
   };
 
@@ -201,8 +214,21 @@ const MyPage = () => {
     setErrors(newErrors);
 
     if (formIsValid) {
-      // 서버로 닉네임 변경 요청
-      modifyInfo(null, null, formData.nickname);
+      try {
+        const response = await modifyInfo({
+          currentPassword: null,
+          newPassword: null,
+          nickname: formData.nickname,
+        });
+
+        alert("닉네임이 성공적으로 변경되었습니다.");
+        setFormData({
+          ...formData,
+          nickname: "",
+        });
+      } catch (error) {
+        alert(error || "닉네임 변경 중 오류가 발생했습니다.");
+      }
     }
   };
 
