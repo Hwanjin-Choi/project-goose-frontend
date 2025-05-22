@@ -5,10 +5,11 @@ import {
   faSearch,
   faUser,
   faBars,
-  faFeatherAlt,
+  faFeatherAlt, // 사용되지 않으므로 주석 처리 또는 제거 가능
   faSignOutAlt,
   faUserCircle,
   faBookmark,
+  faSignInAlt, // 로그인 아이콘 추가 (필요시 사용)
 } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate, useParams } from "react-router-dom";
 import Goose from "../../assets/Goose_header.svg";
@@ -126,28 +127,28 @@ const DropdownSearchWrapper = styled.div`
   border-top: 1px solid #e5e7eb; // border-t border-gray-100
 `;
 
-// ActionButton (Google 스타일 적용)
+// ActionButton (Google 스타일 개선 적용)
 const ActionButton = styled.button`
-  padding: 0 16px; /* Google 버튼은 좌우 패딩이 좀 더 넉넉한 편입니다. */
+  padding: 0 16px;
   font-size: 0.875rem; /* 14px */
-  font-weight: 500; /* Medium */
-  border-radius: 4px; /* Google의 일반적인 border-radius */
+  font-weight: 600; /* 기존 500 (Medium) -> 600 (Semi-bold) 변경 */
+  border-radius: 8px; /* 기존 4px -> 8px 변경으로 좀 더 부드러운 모서리 */
   cursor: pointer;
   transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out,
-    border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    border-color 0.2s ease-in-out, box-shadow 0.25s ease-in-out; /* box-shadow transition 추가 */
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem; /* 아이콘과 텍스트 간격 */
-  line-height: 1.25; /* 텍스트 수직 정렬 도움 */
-  min-height: 36px; /* Google 버튼의 일반적인 최소 높이 */
+  gap: 0.6rem; /* 기존 0.5rem -> 0.6rem 아이콘과 텍스트 간격 약간 증가 */
+  line-height: 1.25;
+  min-height: 38px; /* 기존 36px -> 38px 최소 높이 약간 증가 */
   text-align: center;
   vertical-align: middle;
-  user-select: none; /* 텍스트 선택 방지 */
+  user-select: none;
+  outline: none; /* 포커스 아웃라인은 focus-visible로 관리 */
 
   svg {
-    /* 아이콘 크기 및 정렬 개선 */
-    font-size: 1.125em; /* 아이콘 크기를 텍스트에 비례하게 조정 */
+    font-size: 1.1em; /* 기존 1.125em, 약간의 크기 조정 여지 */
   }
 
   ${({ primary }) =>
@@ -156,33 +157,41 @@ const ActionButton = styled.button`
     background-color: #1A73E8; /* Google Blue */
     color: white;
     border: 1px solid transparent;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05); /* 기본 상태에 미세한 그림자 추가 */
+
     &:hover {
       background-color: #185ABC; /* 호버 시 약간 어둡게 */
-      box-shadow: 0 1px 2px 0 rgba(60,64,67,0.302), 0 1px 3px 1px rgba(60,64,67,0.149);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 4px 8px rgba(0,0,0,0.1); /* 호버 시 그림자 강화 */
     }
     &:active {
       background-color: #174EA6; /* 클릭 시 더 어둡게 */
+      box-shadow: 0 1px 2px rgba(0,0,0,0.15); /* 활성 시 그림자 */
     }
-    &:focus-visible { /* 키보드 포커스 시에만 아웃라인 표시 (더 나은 접근성) */
+    &:focus-visible { /* 키보드 포커스 시에만 아웃라인 표시 */
       outline: none;
       box-shadow: 0 0 0 3px rgba(26,115,232,0.4); /* Google 스타일 포커스 링 */
     }
   `
       : `
-    background-color: transparent;
+    background-color: white; /* 명시적인 흰색 배경 */
     color: #1A73E8; /* Google Blue 텍스트 */
     border: 1px solid #DADCE0; /* Google의 연회색 테두리 */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03); /* 기본 상태에 매우 미세한 그림자 */
+
     &:hover {
-      background-color: rgba(26,115,232,0.04); /* 매우 연한 파란색 배경 */
-      border-color: #c6dafc; /* 호버 시 테두리 색 변경 (약간 밝은 파랑) */
+      background-color: #f8f9fa; /* 호버 시 매우 연한 회색 배경 (Google 스타일) */
+      border-color: #c6c9cc; /* 호버 시 테두리 색 약간 진하게 */
+      box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.07); /* 호버 시 그림자 추가 */
     }
     &:active {
-      background-color: rgba(26,115,232,0.12); /* 클릭 시 배경색 */
+      background-color: #f1f3f4; /* 클릭 시 배경색 */
+      border-color: #b0b3b6;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
     &:focus-visible { /* 키보드 포커스 시에만 아웃라인 표시 */
       outline: none;
       border-color: #1A73E8; /* 포커스 시 테두리 색 강조 */
-      box-shadow: 0 0 0 2px rgba(26,115,232,0.3); /* Google 스타일 포커스 링 */
+      box-shadow: 0 0 0 3px rgba(26,115,232,0.3); /* Google 스타일 포커스 링, 투명도 약간 조정 */
     }
   `}
 `;
@@ -291,21 +300,22 @@ const Header = () => {
   const [searchTerm, setSearchTerm] = useState(currentKeyword);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const isMobile = useMobileDetect();
-  const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated);
+  const [isLoggedIn, setIsLoggedIn] = useState(isAuthenticated); // 이 상태는 isAuthenticated로 대체 가능해 보입니다.
 
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch(); // 현재 코드에서는 사용되지 않음
 
-  const nickname = "문어체";
+  const nickname = "문어체"; // 실제 닉네임은 Redux나 API로부터 받아와야 합니다.
 
   const onLogin = () => {
-    setIsLoggedIn(true); // 추후 변경
-
+    // setIsLoggedIn(true); // Redux 상태 변경으로 처리되어야 함
     navigate("/login");
   };
   const onLogout = () => {
-    setIsLoggedIn(false);
+    // setIsLoggedIn(false); // 실제 로그아웃 로직 (Redux 상태 변경, API 호출 등) 필요
+    // 예시: dispatch(logoutAction());
+    console.log("Logout action dispatched (example)");
   };
   const onNavigate = (url) => {
     navigate(url);
@@ -321,6 +331,12 @@ const Header = () => {
   useEffect(() => {
     setSearchTerm(currentKeyword);
   }, [currentKeyword]);
+
+  useEffect(() => {
+    // 로그인 상태 동기화
+    setIsLoggedIn(isAuthenticated);
+  }, [isAuthenticated]);
+
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
   useEffect(() => {
@@ -337,7 +353,6 @@ const Header = () => {
     <HeaderWrapper>
       <Container>
         <LogoLink onClick={() => onNavigate("/")}>
-          {/* <FontAwesomeIcon icon={faFeatherAlt} size="lg" /> */}
           <img
             src={Goose}
             style={{ width: "30px", height: "30px" }}
@@ -355,7 +370,7 @@ const Header = () => {
         </SearchWrapperDesktop>
 
         <UserActionsWrapper ref={dropdownRef}>
-          {isAuthenticated ? (
+          {isLoggedIn ? ( // isAuthenticated를 직접 사용하는 것이 더 명확할 수 있습니다.
             <>
               <UserButton onClick={toggleDropdown}>
                 {isMobile ? (
@@ -395,7 +410,7 @@ const Header = () => {
                   )}
                   <DropdownItem
                     onClick={() => {
-                      onLogout();
+                      onLogout(); // 실제 로그아웃 처리 필요
                       setIsDropdownOpen(false);
                     }}
                   >
@@ -416,7 +431,7 @@ const Header = () => {
               )}
               {!isMobile && (
                 <ActionButton
-                  primary="true"
+                  primary // primary="true"와 동일
                   onClick={() => onNavigate("/scrap")}
                 >
                   <FontAwesomeIcon icon={faBookmark} /> 저장된 기사
@@ -424,7 +439,10 @@ const Header = () => {
               )}
             </>
           ) : (
-            <ActionButton onClick={onLogin}>로그인</ActionButton>
+            <ActionButton onClick={onLogin}>
+              {/* <FontAwesomeIcon icon={faSignInAlt} />  로그인 아이콘 추가 예시 */}
+              로그인
+            </ActionButton>
           )}
         </UserActionsWrapper>
       </Container>
