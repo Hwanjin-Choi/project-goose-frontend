@@ -36,35 +36,40 @@ const InfiniteScrollController = ({ mode = "news" }) => {
   const dispatch = useDispatch();
   const keywordFetchTimeoutRef = useRef(null);
   const prevKeywordRef = useRef(null);
+  const isFetchingRef = useRef(false);
 
+  // 일반 뉴스 키워드
   const currentKeyword = useSelector((state) => state.keyword.searchText);
+
+  // 스크랩 뉴스 키워드
+  const currentScrapKeyword = useSelector(
+    (state) => state.scrapKeyword.scrapSearchText
+  );
+
   const isAuthenticated = useSelector((state) => state.token.isAuthenticated);
 
-  const {
-    list: displayList,
-    status,
-    hasMore,
-  } = useSelector((state) =>
-    mode === "news"
-      ? {
-          list: state.news.newsList,
-          status: state.news.status,
-          hasMore: state.news.hasMore,
-        }
-      : {
-          list: state.scrapedNews.scrapedNewsList,
-          status: state.scrapedNews.status,
-          hasMore: state.scrapedNews.hasMore,
-        }
+  const displayList = useSelector((state) =>
+    mode === "news" ? state.news.newsList : state.scrapedNews.scrapedNewsList
+  );
+
+  const status = useSelector((state) =>
+    mode === "news" ? state.news.status : state.scrapedNews.status
+  );
+
+  const hasMore = useSelector((state) =>
+    mode === "news" ? state.news.hasMore : state.scrapedNews.hasMore
   );
 
   const [start, setStart] = useState(NEWS_START_INDEX);
 
   const fetchNewsData = async (isNewKeywordSearch = false) => {
+    if (isFetchingRef.current) return;
+
+    isFetchingRef.current = true;
+
     const offset = isNewKeywordSearch ? NEWS_START_INDEX : start;
 
     try {
-      console.log("하이");
       const action = await dispatch(
         mode === "news"
           ? getNewsByParam({
@@ -73,7 +78,7 @@ const InfiniteScrollController = ({ mode = "news" }) => {
               limit: NEWS_DISPLAY_INDEX,
             })
           : getScrapedNewsByParam({
-              keyword: currentKeyword,
+              keyword: currentScrapKeyword,
               offset,
               limit: NEWS_DISPLAY_INDEX,
             })
@@ -97,41 +102,32 @@ const InfiniteScrollController = ({ mode = "news" }) => {
       setStart(offset + NEWS_DISPLAY_INDEX);
     } catch (error) {
       console.error("뉴스 로딩 실패:", error);
+    } finally {
+      isFetchingRef.current = false;
     }
   };
 
   useEffect(() => {
-    if (currentKeyword && currentKeyword !== prevKeywordRef.current) {
-      // 키워드 변경 감지 시 상태 초기화
-      if (mode === "news") {
-        dispatch(resetNewsState());
-        dispatch(resetKeywordState());
-      } else {
-        dispatch(resetScrapedNewsState());
-      }
-
-      setStart(NEWS_START_INDEX);
-      fetchNewsData(true);
-      prevKeywordRef.current = currentKeyword;
-    } else if (!currentKeyword && prevKeywordRef.current) {
-      // 키워드 제거 시 상태 초기화
-      if (mode === "news") {
-        dispatch(resetNewsState());
-        dispatch(resetKeywordState());
-      } else {
-        dispatch(resetScrapedNewsState());
-      }
-
-      setStart(NEWS_START_INDEX);
-      prevKeywordRef.current = null;
+    // 키워드 변경 감지 시 상태 초기화
+    if (mode === "news") {
+      dispatch(resetKeywordState());
+      dispatch(resetNewsState());
+    } else {
+      dispatch(resetKeywordState());
+      dispatch(resetScrapedNewsState());
     }
+
+    setStart(NEWS_START_INDEX);
+    prevKeywordRef.current =
+      mode === "news" ? currentKeyword : currentScrapKeyword;
+    fetchNewsData(true);
 
     return () => {
       if (keywordFetchTimeoutRef.current) {
         clearTimeout(keywordFetchTimeoutRef.current);
       }
     };
-  }, [currentKeyword, dispatch, mode]);
+  }, [currentKeyword, currentScrapKeyword, dispatch, mode]);
 
   const loadMoreNews = () => {
     if (status !== "loading" && hasMore) {
