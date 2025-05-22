@@ -25,15 +25,34 @@ const InfiniteScrollController = () => {
   const { newsList, status, hasMore } = useSelector((state) => state.news);
 
   const [start, setStart] = useState(NEWS_START_INDEX);
+
   const dispatch = useDispatch();
   const prevKeywordRef = useRef(null);
 
   const fetchNewsData = (isNewKeywordSearch = false) => {
+    // Log when fetchNewsData is called
+    console.log(
+      "[InfiniteScrollController] fetchNewsData called. isNewKeywordSearch:",
+      isNewKeywordSearch,
+      "currentKeyword:",
+      currentKeywordFromStore
+    );
+
     if (!currentKeywordFromStore) {
+      console.log(
+        "[InfiniteScrollController] No current keyword. Aborting fetch."
+      );
       return;
     }
 
     const currentOffset = isNewKeywordSearch ? NEWS_START_INDEX : start;
+    console.log(
+      "[InfiniteScrollController] Fetching news with offset:",
+      currentOffset,
+      "and limit:",
+      NEWS_DISPLAY_INDEX
+    );
+
     dispatch(
       getNewsByParam({
         keyword: currentKeywordFromStore,
@@ -44,29 +63,83 @@ const InfiniteScrollController = () => {
 
     if (isNewKeywordSearch) {
       setStart(NEWS_START_INDEX + NEWS_DISPLAY_INDEX);
+      console.log(
+        "[InfiniteScrollController] New keyword search. Resetting start to:",
+        NEWS_START_INDEX + NEWS_DISPLAY_INDEX
+      );
     } else {
-      setStart((prev) => prev + NEWS_DISPLAY_INDEX);
+      setStart((prev) => {
+        const newStart = prev + NEWS_DISPLAY_INDEX;
+        console.log(
+          "[InfiniteScrollController] Loading more. Updating start to:",
+          newStart
+        );
+        return newStart;
+      });
     }
   };
 
   useEffect(() => {
+    console.log(
+      "[InfiniteScrollController] useEffect triggered. currentKeywordFromStore:",
+      currentKeywordFromStore,
+      "prevKeywordRef.current:",
+      prevKeywordRef.current
+    );
     if (
       currentKeywordFromStore &&
       currentKeywordFromStore !== prevKeywordRef.current
     ) {
-      setStart(NEWS_START_INDEX);
-      fetchNewsData(true);
+      console.log(
+        "[InfiniteScrollController] Keyword changed or initial load with keyword. Resetting and fetching data."
+      );
+      dispatch(resetNewsState()); // Reset news list when keyword changes
+      setStart(NEWS_START_INDEX); // Reset start index
+      fetchNewsData(true); // Pass true to indicate it's a new keyword search
       prevKeywordRef.current = currentKeywordFromStore;
     } else if (!currentKeywordFromStore && prevKeywordRef.current) {
+      console.log(
+        "[InfiniteScrollController] Keyword cleared. Resetting prevKeywordRef and news state."
+      );
+      dispatch(resetNewsState()); // Reset news list if keyword is cleared
       prevKeywordRef.current = null;
+      setStart(NEWS_START_INDEX); // Reset start index if keyword is cleared
     }
-  }, [currentKeywordFromStore, dispatch]);
+  }, [currentKeywordFromStore, dispatch]); // Removed fetchNewsData from dependencies as it causes re-renders. It's called conditionally inside.
 
   const loadMoreNews = () => {
+    // Log when loadMoreNews is called (this is the 'next' function for InfiniteScroll)
+    console.log(
+      "[InfiniteScrollController] loadMoreNews called. Status:",
+      status,
+      "HasMore:",
+      hasMore
+    );
+    console.log(
+      "[InfiniteScrollController] Scroll threshold likely met (configured as 70%). Attempting to fetch more news."
+    );
+
     if (status !== "loading" && hasMore) {
       fetchNewsData(false);
+    } else {
+      console.log(
+        "[InfiniteScrollController] Not fetching more news. Status:",
+        status,
+        "HasMore:",
+        hasMore
+      );
     }
   };
+
+  // Log current newsList length and hasMore status before rendering
+  console.log(
+    "[InfiniteScrollController] Rendering. NewsList length:",
+    newsList.length,
+    "HasMore:",
+    hasMore,
+    "Status:",
+    status
+  );
 
   return (
     <>
@@ -77,6 +150,10 @@ const InfiniteScrollController = () => {
         loader={
           <NewsCardsContainer>
             <>
+              {/* Log when loader is shown */}
+              {console.log(
+                "[InfiniteScrollController] Loader is being rendered."
+              )}
               {[...Array(3)].map((_, index) => (
                 <NewsCardSkeleton key={`skeleton-${index}`} />
               ))}
@@ -84,13 +161,17 @@ const InfiniteScrollController = () => {
           </NewsCardsContainer>
         }
         endMessage={
-          newsList.length > 0 ? ( // 뉴스가 하나라도 로드된 후에만 "더 없습니다" 메시지 표시
+          newsList.length > 0 && !hasMore ? ( // Show end message only if there are news items and no more to load
             <p style={{ textAlign: "center" }}>
+              {/* Log when end message is shown */}
+              {console.log(
+                "[InfiniteScrollController] EndMessage is being rendered."
+              )}
               <b>더 이상 뉴스가 없습니다.</b>
             </p>
-          ) : null // 초기 로딩 중이거나, 검색 결과가 아예 없을 때는 endMessage를 숨김 (loader가 보이도록)
+          ) : null
         }
-        scrollThreshold={"70%"}
+        scrollThreshold={"70%"} // This means loadMoreNews will be called when 70% of the scrollable content is visible
         // pullDownToRefresh 관련 기능은 주석 처리된 상태로 유지합니다.
         /* refreshFunction={() => {
         console.log("refreshing");

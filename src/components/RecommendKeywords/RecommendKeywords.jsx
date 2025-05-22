@@ -25,15 +25,15 @@ const KeywordsContainer = styled.section`
   border-bottom: 1px solid #2a2f37; /* 은은한 하단 구분선 */
 
   @media (max-width: 768px) {
-    padding: 24px 0;
-    margin-bottom: 32px;
+    padding: 12px 0;
+    margin-bottom: 12px;
   }
 `;
 
 const KeywordsTitle = styled.h3`
-  font-size: 0.875rem; /* 14px, 기존보다 약간 작게 하여 라벨 느낌 강조 */
+  font-size: 1.5rem; /* 14px, 기존보다 약간 작게 하여 라벨 느낌 강조 */
   font-weight: 600; /* Semi-bold */
-  color: #7b8899; /* 부드러운 회색 계열 (다크 테마에 적합) */
+  color: black; /* 부드러운 회색 계열 (다크 테마에 적합) */
   text-transform: uppercase; /* 대문자 변환 */
   letter-spacing: 0.075em; /* 자간 미세 조정 */
   margin-bottom: 24px; /* 키워드 목록과의 간격 */
@@ -118,13 +118,11 @@ const KeywordPillLink = styled(Link)`
   }
 `;
 
-// --- 컴포넌트 로직 (이전과 동일) ---
-
 /**
  * 추천 키워드를 표시하는 컴포넌트
  * @param {object} props
- * @param {string[]} props.keywords - 추천 키워드 문자열 배열 (API 응답의 data 필드)
- * @param {string} [props.currentKeyword] - 현재 검색된 키워드 (추천 목록에서 제외하기 위함)
+ * @param {string[]} props.keywords
+ * @param {string} [props.currentKeyword]
  */
 const RecommendedKeywords = ({ keywords, currentKeyword }) => {
   if (!keywords || keywords.length === 0) {

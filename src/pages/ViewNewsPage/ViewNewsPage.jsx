@@ -32,7 +32,17 @@ const NewsCardsContainer = styled.div`
   width: 100%;
   align-items: center;
 `;
-const data = ["두산", "경기", "서울", "랜더", "베어스"];
+const data = [
+  "두산",
+  "경기",
+  "서울",
+  "랜더",
+  "베어스",
+  "경기",
+  "더보기",
+  "피자",
+  "테스트",
+];
 const ViewNewsPage = () => {
   const { keyword: urlKeyword } = useParams(); // URL에서 :keyword 값을 가져옴 (명확성을 위해 urlKeyword로 명명)
   const dispatch = useDispatch();
