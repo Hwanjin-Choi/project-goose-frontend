@@ -8,7 +8,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { resetNewsState } from "../../redux/news/newsSlice";
 import { resetKeywordState } from "../../redux/recommend/recommendSlice";
 import RecommendedKeywords from "../../components/RecommendKeywords/RecommendKeywords";
-import InfiniteScrollController from "src/components/InfiniteScrollController/InfiniteScrollController";
+import InfiniteScrollController from "../../components/InfiniteScrollController/InfiniteScrollController";
 const ViewNewsPageWrapper = styled.div`
   gap: 10px;
   box-sizing: border-box;
