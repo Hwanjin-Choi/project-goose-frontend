@@ -14,6 +14,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import Goose from "../../assets/Goose_header.svg";
 import { useSelector, useDispatch } from "react-redux";
 import useMobileDetect from "../../hook/useMobileDetect";
+import { store } from "../../redux/store";
+import { logoutUser } from "../../redux/auth/authSlice";
+
 const HEADER_HEIGHT = "68px";
 
 // Styled Components 정의
@@ -297,15 +300,19 @@ const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  const nickname = "문어체";
+  const nickname = useSelector((state) => state.token.nickname);
 
   const onLogin = () => {
-    setIsLoggedIn(true); // 추후 변경
+    //setIsLoggedIn(true); // 추후 변경
 
     navigate("/login");
   };
-  const onLogout = () => {
-    setIsLoggedIn(false);
+
+  const onLogout = async () => {
+    await dispatch(logoutUser());
+
+    //setIsLoggedIn(false);
+    navigate("/");
   };
   const onNavigate = (url) => {
     navigate(url);

@@ -42,8 +42,10 @@ export const logoutUser = createAsyncThunk(
         error.response?.data?.message || error.message
       );
     } finally {
+      dispatch(logout());
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+      localStorage.removeItem("persist:root");
     }
     return;
   }

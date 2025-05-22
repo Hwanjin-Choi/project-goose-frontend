@@ -2,6 +2,9 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // react-icons에서 아이콘을 임포트
 import { modifyInfo } from "../../api/MyPage/modify";
+import { dispatch } from "d3";
+import { useDispatch } from "react-redux";
+import { updateNickname } from "../../redux/token/tokenSlice";
 
 const FormWrapper = styled.div`
   position: relative;
@@ -199,6 +202,7 @@ const MyPage = () => {
   };
 
   // 닉네임 변경 핸들러
+  const dispatch = useDispatch();
   const handleNicknameSubmit = async (e) => {
     e.preventDefault();
     setErrors({ nickname: "" });
@@ -222,6 +226,7 @@ const MyPage = () => {
         });
 
         alert("닉네임이 성공적으로 변경되었습니다.");
+        dispatch(updateNickname(formData.nickname));
         setFormData({
           ...formData,
           nickname: "",

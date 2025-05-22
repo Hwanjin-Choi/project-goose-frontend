@@ -32,8 +32,11 @@ const tokenSlice = createSlice({
       state.isExpired = initialState.isExpired;
       state.isAuthenticated = initialState.isAuthenticated;
     },
+    updateNickname: (state, action) => {
+      state.nickname = action.payload;
+    },
   },
 });
 
-export const { login, logout, reset } = tokenSlice.actions;
+export const { login, logout, reset, updateNickname } = tokenSlice.actions;
 export default tokenSlice.reducer;

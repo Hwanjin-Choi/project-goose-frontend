@@ -64,7 +64,6 @@ const Signin = () => {
 
         dispatch(setToken({ accessToken, refreshToken, nickname }));
 
-        localStorage.setItem("nickname", nickname);
         localStorage.setItem("accessToken", accessToken);
         localStorage.setItem("refreshToken", refreshToken);
 
