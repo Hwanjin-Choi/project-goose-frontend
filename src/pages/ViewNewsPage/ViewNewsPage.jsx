@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import MainSearchInput from "../../components/MainSearchInput/MainSearchInput";
-import InfiniteScrollController from "../../components/InfiniteScrollController/InfiniteScrollController";
 import { useSelector, useDispatch } from "react-redux";
 import { setKeyword, clearKeyword } from "../../redux/keyword/keywordSlice";
 import useMobileDetect from "../../hook/useMobileDetect";
@@ -9,7 +8,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { resetNewsState } from "../../redux/news/newsSlice";
 import { resetKeywordState } from "../../redux/recommend/recommendSlice";
 import RecommendedKeywords from "../../components/RecommendKeywords/RecommendKeywords";
-
+import InfiniteScrollController from "../../components/InfiniteScrollController/InfiniteScrollController";
 const ViewNewsPageWrapper = styled.div`
   gap: 10px;
   box-sizing: border-box;
