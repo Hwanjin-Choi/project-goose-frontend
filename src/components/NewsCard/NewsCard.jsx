@@ -8,6 +8,7 @@ import {
 import { faBookmark as faRegularBookmark } from "@fortawesome/free-regular-svg-icons"; // 빈 스크랩
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "../Modal/Modal";
+import { postScrapNews } from "../../api/Scrap/ScrapNews";
 
 const CardWrapper = styled.div`
   background: #ffffff;
@@ -164,6 +165,33 @@ const ScrapButton = styled.button`
     font-size: 0.95rem;
   }
 `;
+const ModalMessage = styled.div`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+`;
+
+const ModalTitle = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  display: inline-block;
+  width: 100%;
+`;
+
+const ErrorBanner = styled.div`
+  background-color: #f8d7da;
+  color: #721c24;
+  padding: 15px;
+  text-align: center;
+  font-size: 1rem;
+  border-radius: 5px;
+  margin: 10px 0;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  display: ${({ visible }) => (visible ? "block" : "none")};
+`;
 
 // 날짜 포맷팅 유틸리티 함수
 const formatDate = (dateString) => {
@@ -192,6 +220,7 @@ const NewsCard = ({ newsItem }) => {
     message: "",
     onConfirm: null,
   });
+  const [errorMessage, setErrorMessage] = useState(""); // 오류 메시지 상태
 
   // 스크랩 버튼 클릭 시 모달 열기
   const handleScrapButtonClick = (e) => {
@@ -200,7 +229,13 @@ const NewsCard = ({ newsItem }) => {
     if (isScrapped) {
       setModalContent({
         title: "스크랩 취소",
-        message: `"${plainTitle}" 기사의 스크랩을 취소하시겠습니까?`,
+        message: (
+          <div>
+            <ModalTitle>{plainTitle}</ModalTitle>
+            <br />
+            <span>기사의 스크랩을 취소하시겠습니까?</span>
+          </div>
+        ),
         icon: faExclamationTriangle,
         iconColor: "#f0ad4e",
         onConfirm: () => confirmScrapAction(false, plainTitle),
@@ -210,7 +245,13 @@ const NewsCard = ({ newsItem }) => {
     } else {
       setModalContent({
         title: "기사 스크랩",
-        message: `"${plainTitle}" 기사를 스크랩하시겠습니까?`,
+        message: (
+          <div>
+            <ModalTitle>{plainTitle}</ModalTitle>
+            <br />
+            <span>기사를 스크랩하시겠습니까?</span>
+          </div>
+        ),
         icon: faSolidBookmark,
         iconColor: "#5a6fd8",
         onConfirm: () => confirmScrapAction(true, plainTitle),
@@ -223,7 +264,24 @@ const NewsCard = ({ newsItem }) => {
   const confirmScrapAction = (scrapStatus, plainTitle) => {
     setIsScrapped(scrapStatus);
     setIsModalOpen(false);
-    console.log(`"${plainTitle}" 기사 스크랩 ${scrapStatus ? "완료" : "취소"}`);
+
+    setErrorMessage("");
+
+    postScrapNews(title, originallink, link, description, pubDate)
+      .then(() => {
+        setErrorMessage("");
+        console.log(
+          `"${plainTitle}" 기사 스크랩 ${scrapStatus ? "완료" : "취소"}`
+        );
+      })
+      .catch((error) => {
+        // 오류 발생 시 버튼 상태를 원래대로 되돌리기
+        setIsScrapped(!scrapStatus); // 상태 초기화
+        setErrorMessage(
+          "스크랩 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
+        ); // 오류 메시지 설정
+        console.error("스크랩 처리 중 오류 발생:", error);
+      });
   };
 
   const handleCardClick = (e) => {
@@ -235,6 +293,8 @@ const NewsCard = ({ newsItem }) => {
 
   return (
     <>
+      <ErrorBanner visible={errorMessage !== ""}>{errorMessage}</ErrorBanner>
+
       <CardWrapper onClick={handleCardClick} style={{ cursor: "pointer" }}>
         <ThumbnailWrapper>
           <Thumbnail
@@ -277,7 +337,7 @@ const NewsCard = ({ newsItem }) => {
         icon={modalContent.icon}
         iconColor={modalContent.iconColor}
       >
-        {modalContent.message}
+        <ModalMessage>{modalContent.message}</ModalMessage>
       </Modal>
     </>
   );

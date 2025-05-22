@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  registerUser,
+  resetRegistrationState,
+} from "../../redux/registration/registrationSlice";
 import styled from "styled-components";
 import SignUp_Submit_Btn from "./SignUp_Submit_Btn";
 import GoToButton from "./GoToLoginButton";
 import ReusableModal from "./ReusableModal";
 import { useNavigate } from "react-router-dom";
-import { SignUp } from "../../api/SignUp/signUpApi";
 
 const FormWrapper = styled.div`
   position: relative;
@@ -92,6 +96,8 @@ const CheckboxWrapper = styled.div`
 
 const SignUp_Form = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { status, error } = useSelector((state) => state.registration);
 
   const [modal, setModal] = useState({
     show: false,
@@ -112,6 +118,31 @@ const SignUp_Form = () => {
     password: "",
     nickname: "",
   });
+
+  useEffect(() => {
+    if (status === "failed" && error) {
+      setModal({
+        show: true,
+        message: error, // 실패 메시지 설정
+        buttonText: "닫기",
+        onConfirm: () => {
+          setModal((prev) => ({ ...prev, show: false }));
+          dispatch(resetRegistrationState()); // 상태 초기화
+        },
+      });
+    } else if (status === "succeeded") {
+      setModal({
+        show: true,
+        message: "회원가입이 완료되었습니다.",
+        buttonText: "로그인하러 가기",
+        onConfirm: () => {
+          setModal({ ...modal, show: false });
+          dispatch(resetRegistrationState()); // 상태 초기화
+          navigate("/login");
+        },
+      });
+    }
+  }, [status, error, navigate]);
 
   const handleChange = (e) => {
     const { id, value, type, checked } = e.target;
@@ -143,33 +174,7 @@ const SignUp_Form = () => {
     setErrors(newErrors);
 
     if (formIsValid) {
-      try {
-        await SignUp(userData);
-        // 회원가입 성공 모달 설정
-        setModal({
-          show: true,
-          message: "회원가입이 완료되었습니다.",
-          buttonText: "로그인하러 가기",
-          onConfirm: () => {
-            setModal({ ...modal, show: false });
-            navigate("/login");
-          },
-        });
-      } catch (error) {
-        // 회원가입 실패 모달 설정
-        const errorMsg =
-          error?.response?.data?.message ||
-          error.message ||
-          "회원가입에 실패했습니다.";
-        setModal({
-          show: true,
-          message: errorMsg,
-          buttonText: "닫기",
-          onConfirm: () => {
-            setModal((prev) => ({ ...prev, show: false }));
-          },
-        });
-      }
+      await dispatch(registerUser(userData));
     }
   };
 
@@ -231,7 +236,7 @@ const SignUp_Form = () => {
           <label htmlFor="admin">관리자 권한</label>
         </CheckboxWrapper>
 
-        <SignUp_Submit_Btn onClick={onSubmit} />
+        <SignUp_Submit_Btn onClick={onSubmit} disabled={status === "loading"} />
       </FormWrapper>
 
       {/* 모달 렌더 */}

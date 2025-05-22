@@ -4,7 +4,7 @@ import { persistStore, persistReducer } from "redux-persist";
 import storage from "redux-persist/lib/storage";
 import keywordSlice from "./keyword/keywordSlice";
 import newsSlice from "./news/newsSlice";
-// import registrationSlice from "./registration/registrationSlice";
+import registrationSlice from "./registration/registrationSlice";
 import { combineReducers } from "redux";
 import tokenSlice from "./token/tokenSlice";
 
@@ -12,7 +12,7 @@ import tokenSlice from "./token/tokenSlice";
 const rootReducer = combineReducers({
   keyword: keywordSlice,
   news: newsSlice,
-  // registration: registrationSlice,
+  registration: registrationSlice,
   token: tokenSlice,
 });
 

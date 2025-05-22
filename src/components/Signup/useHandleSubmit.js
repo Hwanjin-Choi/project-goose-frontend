@@ -30,11 +30,12 @@ export const handleSubmit = async ({ userData, setErrors }) => {
   // 모든 입력값이 유효할 경우 서버에 요청
   if (formIsValid) {
     try {
-      const result = await SignUp(userData);
-      console.log("회원가입 성공:", result);
-      //alert("정상적으로 회원가입에 성공하였습니다.");
+      const res = await SignUp(userData);
+      console.log("회원가입 성공:", res);
+      return res;
     } catch (error) {
-      console.log(error.message);
+      console.error("회원가입 에러:", error.message);
+      throw error;
     }
   }
 };
