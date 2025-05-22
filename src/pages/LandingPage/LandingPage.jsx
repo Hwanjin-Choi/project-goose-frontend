@@ -7,6 +7,7 @@ import { setKeyword } from "../../redux/keyword/keywordSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import useMobileDetect from "../../hook/useMobileDetect";
+import TrendingKeyword from "../../components/TrendingKeyword/TrendingKeyword";
 
 const LandingPageContainer = styled.div`
   display: flex;
@@ -38,7 +39,7 @@ const WordCloudWrapper = styled.div`
   position: "relative"; /* PackedBubbleChart 내부의 position:absolute 요소 기준점 */
 `;
 
-const sampleData = [
+const sampleData1 = [
   { name: "심슨", value: 1, category: "Frontend" },
   { name: "야구", value: 2, category: "Visualization" },
   { name: "Youtube", value: 3, category: "Backend" },
@@ -48,6 +49,18 @@ const sampleData = [
   { name: "키보드", value: 6, category: "Language" },
   { name: "레고", value: 7, category: "Language" },
   { name: "안마기", value: 10, category: "Language" },
+];
+const sampleData = [
+  { name: "심슨", value: 1 },
+  { name: "야구", value: 3 },
+  { name: "Youtube", value: 3 },
+  { name: "선거일정", value: 2 },
+  { name: "야구", value: 3 },
+
+  { name: "선거일정", value: 2 },
+  { name: "야구", value: 3 },
+  { name: "Youtube", value: 3 },
+  { name: "선거일정", value: 2 },
 ];
 
 const LandingPage = () => {
@@ -94,6 +107,8 @@ const LandingPage = () => {
           <PackedBubbleChart dataFromServer={sampleData} />
         </WordCloudWrapper>
       </div>
+
+      <TrendingKeyword />
     </LandingPageContainer>
   );
 };

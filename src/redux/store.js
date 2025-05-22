@@ -10,6 +10,7 @@ import newsSlice from "./news/newsSlice";
 import registrationSlice from "./registration/registrationSlice";
 import tokenSlice from "./token/tokenSlice";
 import recommendSlice from "./recommend/recommendSlice";
+import trendingSlice from "./trending/trendingSlice";
 
 // 여러 리듀서를 합치는 경우 (지금은 하나지만 확장성 고려)
 const rootReducer = combineReducers({
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   registration: registrationSlice,
   token: tokenSlice,
   recommend: recommendSlice,
+  trending: trendingSlice,
 });
 
 // persist 설정
