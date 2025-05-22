@@ -1,25 +1,13 @@
 import apiClient from "../index";
 
-export const postScrapNews = async ({
-  title,
-  originallink,
-  link,
-  description,
-  pubdate,
-}) => {
+export const postScrapNews = async (body) => {
   try {
-    const response = await apiClient.post("/news/scrap", {
-      title,
-      originallink,
-      link,
-      description,
-      pubdate,
-    });
+    const response = await apiClient.post("/news/scrap", body);
+    console.log(response);
     if (
       response.data &&
       (response.data.status === "SUCCESS" || response.status === 200)
     ) {
-      console.log("스크랩 성공! :" + response.data);
       return response.data;
     } else {
       throw new Error(

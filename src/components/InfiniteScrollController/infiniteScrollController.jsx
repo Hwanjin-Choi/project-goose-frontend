@@ -4,8 +4,17 @@ import styled from "styled-components";
 
 import { NewsCard } from "../NewsCard/NewsCard";
 import NewsCardSkeleton from "../NewsCardSkeleton/NewsCardSkeleton";
+
 import { useSelector, useDispatch } from "react-redux";
 import { getNewsByParam, resetNewsState } from "../../redux/news/newsSlice";
+import {
+  getScrapedNewsByParam,
+  resetScrapedNewsState,
+} from "../../redux/scrapedNews/scrapedNewsSlice";
+import {
+  getKeywordList,
+  resetKeywordState,
+} from "../../redux/recommend/recommendSlice";
 
 const NewsCardsContainer = styled.div`
   display: flex;
@@ -17,181 +26,149 @@ const NewsCardsContainer = styled.div`
 
 const NEWS_START_INDEX = 1;
 const NEWS_DISPLAY_INDEX = 10;
+const KEYWORD_FETCH_DELAY = 1750;
 
-const InfiniteScrollController = () => {
-  const currentKeywordFromStore = useSelector(
-    (state) => state.keyword.searchText
+/**
+ * @param {Object} props
+ * @param {"news" | "scraped"} props.mode
+ */
+const InfiniteScrollController = ({ mode = "news" }) => {
+  const dispatch = useDispatch();
+  const keywordFetchTimeoutRef = useRef(null);
+  const prevKeywordRef = useRef(null);
+
+  const currentKeyword = useSelector((state) => state.keyword.searchText);
+  const isAuthenticated = useSelector((state) => state.token.isAuthenticated);
+
+  const {
+    list: displayList,
+    status,
+    hasMore,
+  } = useSelector((state) =>
+    mode === "news"
+      ? {
+          list: state.news.newsList,
+          status: state.news.status,
+          hasMore: state.news.hasMore,
+        }
+      : {
+          list: state.scrapedNews.scrapedNewsList,
+          status: state.scrapedNews.status,
+          hasMore: state.scrapedNews.hasMore,
+        }
   );
-  const { newsList, status, hasMore } = useSelector((state) => state.news);
 
   const [start, setStart] = useState(NEWS_START_INDEX);
 
-  const dispatch = useDispatch();
-  const prevKeywordRef = useRef(null);
+  const fetchNewsData = async (isNewKeywordSearch = false) => {
+    if (!currentKeyword) return;
 
-  const fetchNewsData = (isNewKeywordSearch = false) => {
-    // Log when fetchNewsData is called
-    console.log(
-      "[InfiniteScrollController] fetchNewsData called. isNewKeywordSearch:",
-      isNewKeywordSearch,
-      "currentKeyword:",
-      currentKeywordFromStore
-    );
+    const offset = isNewKeywordSearch ? NEWS_START_INDEX : start;
 
-    if (!currentKeywordFromStore) {
-      console.log(
-        "[InfiniteScrollController] No current keyword. Aborting fetch."
+    try {
+      const action = await dispatch(
+        mode === "news"
+          ? getNewsByParam({
+              keyword: currentKeyword,
+              offset,
+              limit: NEWS_DISPLAY_INDEX,
+            })
+          : getScrapedNewsByParam({
+              keyword: currentKeyword,
+              offset,
+              limit: NEWS_DISPLAY_INDEX,
+            })
       );
-      return;
-    }
 
-    const currentOffset = isNewKeywordSearch ? NEWS_START_INDEX : start;
-    console.log(
-      "[InfiniteScrollController] Fetching news with offset:",
-      currentOffset,
-      "and limit:",
-      NEWS_DISPLAY_INDEX
-    );
+      // 뉴스 + 인증 유저인 경우에만 추천 키워드 딜레이 호출
+      if (
+        mode === "news" &&
+        getNewsByParam.fulfilled.match(action) &&
+        isAuthenticated
+      ) {
+        if (keywordFetchTimeoutRef.current) {
+          clearTimeout(keywordFetchTimeoutRef.current);
+        }
+        keywordFetchTimeoutRef.current = setTimeout(() => {
+          dispatch(getKeywordList());
+          keywordFetchTimeoutRef.current = null;
+        }, KEYWORD_FETCH_DELAY);
+      }
 
-    dispatch(
-      getNewsByParam({
-        keyword: currentKeywordFromStore,
-        offset: currentOffset,
-        limit: NEWS_DISPLAY_INDEX,
-      })
-    );
-
-    if (isNewKeywordSearch) {
-      setStart(NEWS_START_INDEX + NEWS_DISPLAY_INDEX);
-      console.log(
-        "[InfiniteScrollController] New keyword search. Resetting start to:",
-        NEWS_START_INDEX + NEWS_DISPLAY_INDEX
-      );
-    } else {
-      setStart((prev) => {
-        const newStart = prev + NEWS_DISPLAY_INDEX;
-        console.log(
-          "[InfiniteScrollController] Loading more. Updating start to:",
-          newStart
-        );
-        return newStart;
-      });
+      setStart(offset + NEWS_DISPLAY_INDEX);
+    } catch (error) {
+      console.error("뉴스 로딩 실패:", error);
     }
   };
 
   useEffect(() => {
-    console.log(
-      "[InfiniteScrollController] useEffect triggered. currentKeywordFromStore:",
-      currentKeywordFromStore,
-      "prevKeywordRef.current:",
-      prevKeywordRef.current
-    );
-    if (
-      currentKeywordFromStore &&
-      currentKeywordFromStore !== prevKeywordRef.current
-    ) {
-      console.log(
-        "[InfiniteScrollController] Keyword changed or initial load with keyword. Resetting and fetching data."
-      );
-      dispatch(resetNewsState()); // Reset news list when keyword changes
-      setStart(NEWS_START_INDEX); // Reset start index
-      fetchNewsData(true); // Pass true to indicate it's a new keyword search
-      prevKeywordRef.current = currentKeywordFromStore;
-    } else if (!currentKeywordFromStore && prevKeywordRef.current) {
-      console.log(
-        "[InfiniteScrollController] Keyword cleared. Resetting prevKeywordRef and news state."
-      );
-      dispatch(resetNewsState()); // Reset news list if keyword is cleared
+    if (currentKeyword && currentKeyword !== prevKeywordRef.current) {
+      // 키워드 변경 감지 시 상태 초기화
+      if (mode === "news") {
+        dispatch(resetNewsState());
+        dispatch(resetKeywordState());
+      } else {
+        dispatch(resetScrapedNewsState());
+      }
+
+      setStart(NEWS_START_INDEX);
+      fetchNewsData(true);
+      prevKeywordRef.current = currentKeyword;
+    } else if (!currentKeyword && prevKeywordRef.current) {
+      // 키워드 제거 시 상태 초기화
+      if (mode === "news") {
+        dispatch(resetNewsState());
+        dispatch(resetKeywordState());
+      } else {
+        dispatch(resetScrapedNewsState());
+      }
+
+      setStart(NEWS_START_INDEX);
       prevKeywordRef.current = null;
-      setStart(NEWS_START_INDEX); // Reset start index if keyword is cleared
     }
-  }, [currentKeywordFromStore, dispatch]); // Removed fetchNewsData from dependencies as it causes re-renders. It's called conditionally inside.
+
+    return () => {
+      if (keywordFetchTimeoutRef.current) {
+        clearTimeout(keywordFetchTimeoutRef.current);
+      }
+    };
+  }, [currentKeyword, dispatch, mode]);
 
   const loadMoreNews = () => {
-    // Log when loadMoreNews is called (this is the 'next' function for InfiniteScroll)
-    console.log(
-      "[InfiniteScrollController] loadMoreNews called. Status:",
-      status,
-      "HasMore:",
-      hasMore
-    );
-    console.log(
-      "[InfiniteScrollController] Scroll threshold likely met (configured as 70%). Attempting to fetch more news."
-    );
-
     if (status !== "loading" && hasMore) {
       fetchNewsData(false);
-    } else {
-      console.log(
-        "[InfiniteScrollController] Not fetching more news. Status:",
-        status,
-        "HasMore:",
-        hasMore
-      );
     }
   };
 
-  // Log current newsList length and hasMore status before rendering
-  console.log(
-    "[InfiniteScrollController] Rendering. NewsList length:",
-    newsList.length,
-    "HasMore:",
-    hasMore,
-    "Status:",
-    status
-  );
-
   return (
-    <>
-      <InfiniteScroll
-        dataLength={newsList.length}
-        next={loadMoreNews}
-        hasMore={hasMore}
-        loader={
+    <InfiniteScroll
+      dataLength={displayList.length}
+      next={loadMoreNews}
+      hasMore={hasMore && status !== "loading"}
+      loader={
+        status === "loading" ? (
           <NewsCardsContainer>
-            <>
-              {/* Log when loader is shown */}
-              {console.log(
-                "[InfiniteScrollController] Loader is being rendered."
-              )}
-              {[...Array(3)].map((_, index) => (
-                <NewsCardSkeleton key={`skeleton-${index}`} />
-              ))}
-            </>
+            {[...Array(3)].map((_, index) => (
+              <NewsCardSkeleton key={`news-skeleton-${index}`} />
+            ))}
           </NewsCardsContainer>
-        }
-        endMessage={
-          newsList.length > 0 && !hasMore ? ( // Show end message only if there are news items and no more to load
-            <p style={{ textAlign: "center" }}>
-              {/* Log when end message is shown */}
-              {console.log(
-                "[InfiniteScrollController] EndMessage is being rendered."
-              )}
-              <b>더 이상 뉴스가 없습니다.</b>
-            </p>
-          ) : null
-        }
-        scrollThreshold={"70%"} // This means loadMoreNews will be called when 70% of the scrollable content is visible
-        // pullDownToRefresh 관련 기능은 주석 처리된 상태로 유지합니다.
-        /* refreshFunction={() => {
-        console.log("refreshing");
-      }}
-      pullDownToRefresh
-      pullDownToRefreshThreshold={100}
-      pullDownToRefreshContent={
-        <h3 style={{ textAlign: "center" }}>&#8595; 아래로 당겨서 새로고침</h3>
+        ) : null
       }
-      releaseToRefreshContent={
-        <h3 style={{ textAlign: "center" }}>&#8593; 놓으면 새로고침됩니다</h3>
-      } */
-      >
-        <NewsCardsContainer>
-          {newsList.map((item, index) => (
-            <NewsCard key={index} newsItem={item} />
-          ))}
-        </NewsCardsContainer>
-      </InfiniteScroll>
-    </>
+      endMessage={
+        displayList.length > 0 && !hasMore ? (
+          <p style={{ textAlign: "center" }}>
+            <b>더 이상 뉴스가 없습니다.</b>
+          </p>
+        ) : null
+      }
+      scrollThreshold={"70%"}
+    >
+      <NewsCardsContainer>
+        {displayList.map((item, index) => (
+          <NewsCard key={index} newsItem={item} />
+        ))}
+      </NewsCardsContainer>
+    </InfiniteScroll>
   );
 };
 

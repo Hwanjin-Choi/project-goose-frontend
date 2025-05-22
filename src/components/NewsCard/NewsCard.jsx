@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import styled, { createGlobalStyle } from "styled-components";
-import imageUrl from "../../assets/Goose.png";
+import defaultImage from "../../assets/Goose.png";
 import {
   faBookmark as faSolidBookmark,
   faExclamationTriangle,
@@ -211,8 +211,9 @@ const formatDate = (dateString) => {
 
 // 뉴스 카드 컴포넌트
 const NewsCard = ({ newsItem }) => {
-  const { title, description, pubDate, link, originallink } = newsItem;
-  const [isScrapped, setIsScrapped] = useState(false);
+  const { title, description, pubDate, link, originallink, scraped, imageUrl } =
+    newsItem;
+  const [isScrapped, setIsScrapped] = useState(scraped);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({
@@ -266,8 +267,15 @@ const NewsCard = ({ newsItem }) => {
     setIsModalOpen(false);
 
     setErrorMessage("");
-
-    postScrapNews(title, originallink, link, description, pubDate)
+    const body = {
+      title,
+      originallink,
+      link,
+      description,
+      pubDate,
+      imageUrl,
+    };
+    postScrapNews(body)
       .then(() => {
         setErrorMessage("");
         console.log(
@@ -298,7 +306,7 @@ const NewsCard = ({ newsItem }) => {
       <CardWrapper onClick={handleCardClick} style={{ cursor: "pointer" }}>
         <ThumbnailWrapper>
           <Thumbnail
-            src={newsItem.imageUrl ? newsItem.imageUrl : imageUrl}
+            src={imageUrl ? imageUrl : defaultImage}
             alt={`${title.replace(/<\/?b>/g, "")} 썸네일`}
             onError={(e) => {
               e.target.onerror = null;

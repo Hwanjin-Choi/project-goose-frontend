@@ -9,6 +9,7 @@ import RegistrationPage from "./pages/SignUpPage/Signup_Page";
 import ViewNewsPage from "./pages/ViewNewsPage/ViewNewsPage";
 import ExpiredPage from "./pages/ExpiredPage/ExpiredPage.jsx";
 import MyPage from "./pages/MyPage/MyPage.jsx";
+import ViewScrapedNewsPage from "./pages/ScrapedNewsPage/ScrapedNewspage.jsx";
 const App = () => {
   return (
     <>
@@ -25,6 +26,8 @@ const App = () => {
             <Route path="/expired-page" element={<ExpiredPage />} />
 
             <Route path="/my-page" element={<MyPage />} />
+
+            <Route path="/scrap" element={<ViewScrapedNewsPage />} />
             {/* <Route path="*" element={<NotFoundPage />} /> */}
           </Routes>
         </Layout>

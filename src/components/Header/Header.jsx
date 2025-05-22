@@ -319,10 +319,8 @@ const Header = () => {
     }
   };
   useEffect(() => {
-    //console.log(params);
-    setSearchTerm(params.keyword);
-  }, [params]);
-
+    setSearchTerm(currentKeyword);
+  }, [currentKeyword]);
   const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
 
   useEffect(() => {
