@@ -88,7 +88,7 @@ const ViewNewsPage = () => {
       />
 
       {urlKeyword ? (
-        <InfiniteScrollController />
+        <InfiniteScrollController mode="news" />
       ) : (
         <p style={{ textAlign: "center" }}>검색어를 URL에 입력해주세요.</p>
       )}

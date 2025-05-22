@@ -12,6 +12,7 @@ import keywordSlice from "./keyword/keywordSlice";
 import newsSlice from "./news/newsSlice";
 import registrationSlice from "./registration/registrationSlice";
 import tokenSlice from "./token/tokenSlice";
+import scrapedNewsSlice from "./scrapedNews/scrapedNewsSlice";
 import recommendSlice from "./recommend/recommendSlice";
 import trendingSlice from "./trending/trendingSlice";
 
@@ -21,6 +22,7 @@ const rootReducer = combineReducers({
   news: newsSlice,
   registration: registrationSlice,
   token: tokenSlice,
+  scrapedNews: scrapedNewsSlice,
   recommend: recommendSlice,
   trending: trendingSlice,
 });
