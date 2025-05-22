@@ -32,7 +32,7 @@ const KEYWORD_FETCH_DELAY = 1750;
  * @param {Object} props
  * @param {"news" | "scraped"} props.mode
  */
-const InfiniteScrollController = ({ mode = "scraped" }) => {
+const InfiniteScrollController = ({ mode = "news" }) => {
   const dispatch = useDispatch();
   const keywordFetchTimeoutRef = useRef(null);
   const prevKeywordRef = useRef(null);
@@ -61,8 +61,6 @@ const InfiniteScrollController = ({ mode = "scraped" }) => {
   const [start, setStart] = useState(NEWS_START_INDEX);
 
   const fetchNewsData = async (isNewKeywordSearch = false) => {
-    //if (!currentKeyword) return;
-
     const offset = isNewKeywordSearch ? NEWS_START_INDEX : start;
 
     try {
@@ -75,7 +73,7 @@ const InfiniteScrollController = ({ mode = "scraped" }) => {
               limit: NEWS_DISPLAY_INDEX,
             })
           : getScrapedNewsByParam({
-              keyword: "",
+              keyword: currentKeyword,
               offset,
               limit: NEWS_DISPLAY_INDEX,
             })

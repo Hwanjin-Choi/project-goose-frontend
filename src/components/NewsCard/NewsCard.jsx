@@ -211,9 +211,17 @@ const formatDate = (dateString) => {
 
 // 뉴스 카드 컴포넌트
 const NewsCard = ({ newsItem }) => {
-  const { title, description, pubDate, link, originallink, scraped, imageUrl } =
-    newsItem;
-  const [isScrapped, setIsScrapped] = useState(scraped);
+  const {
+    title,
+    description,
+    pubDate,
+    link,
+    originallink,
+    scraped,
+    scrap,
+    imageUrl,
+  } = newsItem;
+  const [isScrapped, setIsScrapped] = useState(scraped || scrap);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({

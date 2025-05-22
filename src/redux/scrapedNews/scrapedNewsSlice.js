@@ -17,18 +17,18 @@ export const getScrapedNewsByParam = createAsyncThunk(
   "news/scrapedNews",
   async (payload, { rejectWithValue }) => {
     try {
+      console.log("요청 보내기");
       const response = await apiClient.get("/news/scrap", { params: payload });
 
-      if (response.data && response.data.status === "SUCCESS") {
-        return response.data;
+      if (response.data) {
+        console.log(response.data);
+        return response.data; // 그대로 content, pageable 등을 넘겨줌
       } else {
-        throw new Error(
-          response.data.message || "스크랩된 뉴스를 불러오는데 실패했습니다"
-        );
+        throw new Error("스크랩된 뉴스를 불러오는데 실패했습니다");
       }
-    } catch (error) {
+    } catch (e) {
       const errorMessage =
-        error.response?.data?.message || error.message || "Login Failed";
+        e.response?.data?.message || e.message || "스크랩된 뉴스 요청 실패";
       return rejectWithValue(errorMessage);
     }
   }
@@ -55,23 +55,24 @@ const scrapedNewsSlice = createSlice({
       .addCase(getScrapedNewsByParam.fulfilled, (state, action) => {
         state.status = "succeeded";
 
-        const responseItem = action.payload.data;
+        const responseItem = action.payload;
 
         state.scrapedNewsList = [
           ...state.scrapedNewsList,
-          ...responseItem.items,
+          ...responseItem.content,
         ];
 
-        if (responseItem.total > state.scrapedNewsList.length) {
-          state.hasMore = true;
-        } else {
-          state.hasMore = false;
-        }
-        state.totalCount = responseItem.total;
+        state.totalCount = responseItem.totalElements;
+
+        state.hasMore = !responseItem.last;
+
         state.error = null;
       })
       .addCase(getScrapedNewsByParam.rejected, (state, action) => {
+        console.error("스크랩 뉴스 API 에러:", error);
+
         state.status = "failed";
+        state.error = action.payload || "스크랩 뉴스 로딩 실패";
       });
   },
 });
