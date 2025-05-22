@@ -22,11 +22,11 @@ const tokenSlice = createSlice({
       state.nickname = "";
       state.accessToken = "";
       state.refreshToken = "";
-
       state.isExpired = true;
       state.isAuthenticated = false;
     },
     reset: (state) => {
+      state.nickname = initialState.nickname;
       state.accessToken = initialState.accessToken;
       state.refreshToken = initialState.refreshToken;
       state.isExpired = initialState.isExpired;
