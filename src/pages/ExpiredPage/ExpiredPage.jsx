@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Modal from "../../components/Modal/Modal";
 import { useNavigate } from "react-router-dom";
-import { reset } from "../../redux/tokenSlice";
+import { reset } from "../../redux/token/tokenSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 const ExpiredPage = () => {

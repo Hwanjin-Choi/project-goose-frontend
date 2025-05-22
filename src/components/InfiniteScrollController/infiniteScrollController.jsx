@@ -34,10 +34,6 @@ const InfiniteScrollController = () => {
     }
 
     const currentOffset = isNewKeywordSearch ? NEWS_START_INDEX : start;
-
-    console.log(
-      `InfiniteScrollController: 뉴스 요청 - 키워드: ${currentKeywordFromStore}, offset: ${currentOffset}`
-    );
     dispatch(
       getNewsByParam({
         keyword: currentKeywordFromStore,
@@ -58,10 +54,6 @@ const InfiniteScrollController = () => {
       currentKeywordFromStore &&
       currentKeywordFromStore !== prevKeywordRef.current
     ) {
-      console.log(
-        "InfiniteScrollController: 새 키워드 감지 ->",
-        currentKeywordFromStore
-      );
       setStart(NEWS_START_INDEX);
       fetchNewsData(true);
       prevKeywordRef.current = currentKeywordFromStore;
@@ -85,7 +77,7 @@ const InfiniteScrollController = () => {
         loader={
           <NewsCardsContainer>
             <>
-              {[...Array(NEWS_DISPLAY_INDEX)].map((_, index) => (
+              {[...Array(3)].map((_, index) => (
                 <NewsCardSkeleton key={`skeleton-${index}`} />
               ))}
             </>

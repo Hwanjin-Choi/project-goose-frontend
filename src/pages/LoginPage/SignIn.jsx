@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./SignIn.css";
 
-import { login as setToken, logout } from "../../redux/tokenSlice";
+import { login as setToken, logout } from "../../redux/token/tokenSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { login as loginApi } from "../../api/Login/loginApi";
 

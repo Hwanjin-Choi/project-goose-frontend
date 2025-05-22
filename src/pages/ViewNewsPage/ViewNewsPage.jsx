@@ -8,6 +8,7 @@ import { setKeyword, clearKeyword } from "../../redux/keyword/keywordSlice";
 import useMobileDetect from "../../hook/useMobileDetect";
 import { useParams, useNavigate } from "react-router-dom";
 import { resetNewsState } from "../../redux/news/newsSlice";
+import RecommendedKeywords from "../../components/RecommendKeywords/RecommendKeywords";
 // 페이지 전체를 감싸는 Wrapper
 const ViewNewsPageWrapper = styled.div`
   gap: 10px;
@@ -31,7 +32,7 @@ const NewsCardsContainer = styled.div`
   width: 100%;
   align-items: center;
 `;
-
+const data = ["두산", "경기", "서울", "랜더", "베어스"];
 const ViewNewsPage = () => {
   const { keyword: urlKeyword } = useParams(); // URL에서 :keyword 값을 가져옴 (명확성을 위해 urlKeyword로 명명)
   const dispatch = useDispatch();
@@ -87,6 +88,7 @@ const ViewNewsPage = () => {
         </SearchInputWrapper>
       )}
 
+      <RecommendedKeywords keywords={data} currentKeyword={urlKeyword} />
       {urlKeyword ? (
         <InfiniteScrollController />
       ) : (
