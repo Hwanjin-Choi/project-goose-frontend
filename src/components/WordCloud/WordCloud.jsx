@@ -51,9 +51,9 @@ const PackedBubbleChart = ({ dataFromServer }) => {
     const validData = dataFromServer.filter(
       (d) =>
         d &&
-        typeof d.name !== "undefined" &&
-        typeof d.value === "number" &&
-        d.value > 0
+        typeof d.keyword !== "undefined" &&
+        typeof d.count === "number" &&
+        d.count > 0
     );
 
     if (validData.length === 0) {
@@ -66,8 +66,8 @@ const PackedBubbleChart = ({ dataFromServer }) => {
 
     const root = d3
       .hierarchy({ children: validData })
-      .sum((d) => d.value)
-      .sort((a, b) => b.value - a.value);
+      .sum((d) => d.count)
+      .sort((a, b) => b.count - a.count);
 
     // 동적으로 받아온 dimensions를 사용
     const packLayout = d3
@@ -109,7 +109,9 @@ const PackedBubbleChart = ({ dataFromServer }) => {
     const color = d3
       .scaleOrdinal()
       .domain(
-        categories.length > 0 ? categories : layoutData.map((d) => d.data.name)
+        categories.length > 0
+          ? categories
+          : layoutData.map((d) => d.data.keyword)
       )
       .range(d3.schemeTableau10);
 
@@ -139,7 +141,7 @@ const PackedBubbleChart = ({ dataFromServer }) => {
         tooltip
           .style("opacity", 1)
           .attr("transform", `translate(${d.x},${d.y - d.r - 5})`)
-          .text(`${d.data.name}: ${d.data.value}`)
+          .text(`${d.data.keyword}는 ${d.data.count}번 검색 됐습니다`)
           .raise();
       })
       .on("mouseout", function () {
@@ -150,8 +152,7 @@ const PackedBubbleChart = ({ dataFromServer }) => {
         tooltip.style("opacity", 0);
       })
       .on("click", function (event, d) {
-        console.log("버블 클릭됨:", d.data);
-        const keyword = d.data.name;
+        const keyword = d.data.keyword;
         dispatch(setKeyword(keyword));
         navigate(`/view-news/${keyword}`);
       });
@@ -159,9 +160,9 @@ const PackedBubbleChart = ({ dataFromServer }) => {
     node
       .append("circle")
       .attr("r", (d) => d.r)
-      .attr("fill", (d) => color(d.data.name))
+      .attr("fill", (d) => color(d.data.keyword))
       .attr("opacity", 0.85)
-      .attr("stroke", (d) => d3.rgb(color(d.data.name)).darker(0.5))
+      .attr("stroke", (d) => d3.rgb(color(d.data.keyword)).darker(0.5))
       .attr("stroke-width", 1);
 
     const textNodes = node
@@ -175,12 +176,12 @@ const PackedBubbleChart = ({ dataFromServer }) => {
       .style("font-weight", "bold");
 
     textNodes.each(function (d) {
-      if (!d.data || typeof d.data.name === "undefined" || d.r < 8) {
+      if (!d.data || typeof d.data.keyword === "undefined" || d.r < 8) {
         // 작은 버블은 텍스트 표시 안 함
         return;
       }
       const self = d3.select(this);
-      const textContent = String(d.data.name);
+      const textContent = String(d.data.keyword);
       const radius = d.r; // 현재 버블의 반지름
 
       // 텍스트 줄바꿈 및 크기 조절 로직 (기존 로직 유지, 필요시 d.r에 따라 동적으로 반응하도록 미세 조정 가능)
@@ -242,9 +243,9 @@ const PackedBubbleChart = ({ dataFromServer }) => {
     dataFromServer.filter(
       (d) =>
         d &&
-        typeof d.name !== "undefined" &&
-        typeof d.value === "number" &&
-        d.value > 0
+        typeof d.keyword !== "undefined" &&
+        typeof d.count === "number" &&
+        d.count > 0
     ).length > 0;
 
   return (
