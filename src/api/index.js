@@ -1,7 +1,7 @@
 import axios from "axios";
 import qs from "qs";
 import { store } from "../redux/store"; // Redux 스토어를 직접 import 합니다.
-import { login, logout } from "../redux/tokenSlice";
+import { login, logout } from "../redux/token/tokenSlice";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 const apiClient = axios.create({

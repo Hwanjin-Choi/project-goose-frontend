@@ -14,7 +14,7 @@ import Goose from "../../assets/Goose_header.svg";
 import { useSelector, useDispatch } from "react-redux";
 import useMobileDetect from "../../hook/useMobileDetect";
 import { setKeyword } from "../../redux/keyword/keywordSlice";
-import { logout } from "../../redux/tokenSlice";
+import { logout } from "../../redux/token/tokenSlice";
 const HEADER_HEIGHT = "68px";
 
 // Styled Components 정의
