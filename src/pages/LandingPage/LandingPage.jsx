@@ -7,7 +7,8 @@ import { setKeyword } from "../../redux/keyword/keywordSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import useMobileDetect from "../../hook/useMobileDetect";
-
+import { getTrendingKeywordList } from "../../redux/trending/trendingSlice";
+import TrendingKeyword from "../../components/TrendingKeyword/TrendingKeyword";
 const LandingPageContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -38,7 +39,7 @@ const WordCloudWrapper = styled.div`
   position: "relative"; /* PackedBubbleChart 내부의 position:absolute 요소 기준점 */
 `;
 
-const sampleData = [
+const sampleData1 = [
   { name: "심슨", value: 1, category: "Frontend" },
   { name: "야구", value: 2, category: "Visualization" },
   { name: "Youtube", value: 3, category: "Backend" },
@@ -48,6 +49,18 @@ const sampleData = [
   { name: "키보드", value: 6, category: "Language" },
   { name: "레고", value: 7, category: "Language" },
   { name: "안마기", value: 10, category: "Language" },
+];
+const sampleData = [
+  { name: "심슨", value: 1 },
+  { name: "야구", value: 3 },
+  { name: "Youtube", value: 3 },
+  { name: "선거일정", value: 2 },
+  { name: "야구", value: 3 },
+
+  { name: "선거일정", value: 2 },
+  { name: "야구", value: 3 },
+  { name: "Youtube", value: 3 },
+  { name: "선거일정", value: 2 },
 ];
 
 const LandingPage = () => {
@@ -72,6 +85,18 @@ const LandingPage = () => {
     setSearchTerm(params.keyword);
   }, [params.keyword]);
 
+  useEffect(() => {
+    const fetchTrendingKeyword = async () => {
+      try {
+        await dispatch(getTrendingKeywordList());
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchTrendingKeyword();
+  }, []);
+
   return (
     <LandingPageContainer>
       <StyledImage src={Goose} alt="Goose Logo" />
@@ -81,19 +106,7 @@ const LandingPage = () => {
         onSearch={handleSearch}
         placeholder="오늘의 뉴스는?"
       />
-
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          height: isMobile ? "calc(100vh - 260px)" : "calc(100vh - 360px)",
-          width: "100%",
-        }}
-      >
-        <WordCloudWrapper>
-          <PackedBubbleChart dataFromServer={sampleData} />
-        </WordCloudWrapper>
-      </div>
+      <TrendingKeyword />
     </LandingPageContainer>
   );
 };
