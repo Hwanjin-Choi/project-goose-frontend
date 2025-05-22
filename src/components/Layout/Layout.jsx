@@ -34,8 +34,6 @@ const MainContent = styled.main`
 `;
 
 const Layout = ({ children }) => {
-  const params = useParams();
-  console.log(params);
   return (
     <ThemeProvider theme={theme}>
       <Header />

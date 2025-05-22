@@ -220,6 +220,7 @@ const MyPage = () => {
           newPassword: null,
           nickname: formData.nickname,
         });
+        console.log(response, "response check in modify");
 
         alert("닉네임이 성공적으로 변경되었습니다.");
         setFormData({
