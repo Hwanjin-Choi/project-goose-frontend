@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled, { createGlobalStyle } from "styled-components";
 import defaultImage from "../../assets/Goose.png";
 import {
@@ -10,6 +10,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "../Modal/Modal";
 import { postScrapNews } from "../../api/Scrap/ScrapNews";
 import { useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
+
 const CardWrapper = styled.div`
   background: #ffffff;
   border-radius: 16px;
@@ -193,6 +195,17 @@ const ErrorBanner = styled.div`
   display: ${({ visible }) => (visible ? "block" : "none")};
 `;
 
+const decodeHtmlEntities = (html) => {
+  const txt = document.createElement("textarea");
+  txt.innerHTML = html;
+  return txt.value;
+};
+
+const getPlainText = (htmlString) => {
+  const noTags = htmlString.replace(/<\/?[^>]+(>|$)/g, ""); // 모든 HTML 태그 제거
+  return decodeHtmlEntities(noTags); // HTML 엔티티 디코딩
+};
+
 // 날짜 포맷팅 유틸리티 함수
 const formatDate = (dateString) => {
   if (!dateString) return "날짜 정보 없음";
@@ -220,17 +233,47 @@ const NewsCard = ({ newsItem }) => {
     scraped,
     scrap,
     imageUrl,
+    createdAt,
   } = newsItem;
   const [isScrapped, setIsScrapped] = useState(scraped || scrap);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({
     title: "",
     message: "",
     onConfirm: null,
   });
+  const [isScrapPage, setIsScrapPage] = useState(false);
+
   const [errorMessage, setErrorMessage] = useState(""); // 오류 메시지 상태
-  const isAuthenticated = useSelector((state) => state.token.isAuthenticated);
+  const scrapSearchText = useSelector(
+    (state) => state.scrapKeyword.scrapSearchText
+  );
+
+  const location = useLocation();
+
+  useEffect(() => {
+    if (
+      location.pathname.includes("/scrap") &&
+      scrapSearchText &&
+      scrapSearchText.length > 0
+    ) {
+      setIsScrapPage(true);
+    }
+  }, [scrapSearchText]);
+
+  const changeHTML = (title, keyword) => {
+    if (!title || !keyword) {
+      return { __html: title || "" };
+    }
+    const regex = new RegExp(
+      keyword.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+      "gi"
+    );
+    const highlightedTitle = title.replace(regex, (match) => `<b>${match}</b>`);
+
+    return { __html: highlightedTitle };
+  };
+
   // 스크랩 버튼 클릭 시 모달 열기
   const handleScrapButtonClick = (e) => {
     e.stopPropagation();
@@ -276,10 +319,10 @@ const NewsCard = ({ newsItem }) => {
 
     setErrorMessage("");
     const body = {
-      title,
+      title: getPlainText(title),
       originallink,
       link,
-      description,
+      description: getPlainText(title),
       pubDate,
       imageUrl,
     };
@@ -325,22 +368,39 @@ const NewsCard = ({ newsItem }) => {
         </ThumbnailWrapper>
         <ContentArea>
           <div>
-            <Title dangerouslySetInnerHTML={{ __html: title }} />
-            <Description dangerouslySetInnerHTML={{ __html: description }} />
+            <Title
+              dangerouslySetInnerHTML={
+                isScrapPage
+                  ? changeHTML(title, scrapSearchText)
+                  : { __html: title }
+              }
+            />
+            <Description
+              dangerouslySetInnerHTML={
+                isScrapPage
+                  ? changeHTML(description, scrapSearchText)
+                  : { __html: description }
+              }
+            />
           </div>
           <Footer>
-            <PublishDate>{formatDate(pubDate)}</PublishDate>
-            {isAuthenticated && (
-              <ScrapButton
-                onClick={handleScrapButtonClick}
-                isScrapped={isScrapped}
-                aria-label={isScrapped ? "스크랩 취소" : "스크랩 하기"}
-              >
-                <FontAwesomeIcon
-                  icon={isScrapped ? faSolidBookmark : faRegularBookmark}
-                />
-              </ScrapButton>
+            {location.pathname.includes("/scrap") ? (
+              <PublishDate>
+                스크랩 한 날짜 : {formatDate(createdAt)}
+              </PublishDate>
+            ) : (
+              <PublishDate>{formatDate(pubDate)}</PublishDate>
             )}
+
+            <ScrapButton
+              onClick={handleScrapButtonClick}
+              isScrapped={isScrapped}
+              aria-label={isScrapped ? "스크랩 취소" : "스크랩 하기"}
+            >
+              <FontAwesomeIcon
+                icon={isScrapped ? faSolidBookmark : faRegularBookmark}
+              />
+            </ScrapButton>
           </Footer>
         </ContentArea>
       </CardWrapper>
