@@ -10,6 +10,8 @@ import ViewNewsPage from "./pages/ViewNewsPage/ViewNewsPage";
 import ExpiredPage from "./pages/ExpiredPage/ExpiredPage.jsx";
 import MyPage from "./pages/MyPage/MyPage.jsx";
 import ViewScrapedNewsPage from "./pages/ScrapedNewsPage/ScrapedNewspage.jsx";
+import BannedUserPage from "./pages/BannedUserPage/BannedUserPage";
+import MaintenenacePage from "./pages/MaintenancePage/MaintenancePage";
 const App = () => {
   return (
     <>
@@ -28,6 +30,9 @@ const App = () => {
             <Route path="/my-page" element={<MyPage />} />
 
             <Route path="/scrap/:keyword?" element={<ViewScrapedNewsPage />} />
+
+            <Route path="/banned-user-page" element={<BannedUserPage />} />
+            <Route path="/maintenance-page" element={<MaintenenacePage />} />
             {/* <Route path="*" element={<NotFoundPage />} /> */}
           </Routes>
         </Layout>

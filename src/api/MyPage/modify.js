@@ -11,7 +11,6 @@ export const modifyInfo = async ({
       newPassword,
       nickname,
     });
-
     if (
       response.data &&
       (response.data.status === "SUCCESS" || response.status === 200)

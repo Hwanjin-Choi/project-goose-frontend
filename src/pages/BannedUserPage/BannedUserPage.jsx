@@ -7,9 +7,9 @@ import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 const ExpiredPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { isAuthenticated, isExpired } = useSelector((state) => state.token);
+  const { isAuthenticated, isBanned } = useSelector((state) => state.token);
   useEffect(() => {
-    if (isExpired) {
+    if (isBanned) {
       setIsModalOpen(true);
     } else {
       navigate("/");
@@ -18,15 +18,15 @@ const ExpiredPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [modalContent, setModalContent] = useState({
-    title: "세션만료",
-    message: "세션이 만료 되었습니다. 다시 로그인해주세요",
-    confirmText: "로그인",
+    title: "정지된 계정",
+    message: "관리자의 의해 정지된 계정입니다",
+    confirmText: "확인",
     icon: faExclamationTriangle,
     iconColor: "#f0ad4e",
     onConfirm: () => {
       dispatch(reset());
       setIsModalOpen(false);
-      navigate("/login");
+      navigate("/");
     },
   });
 

@@ -1,7 +1,12 @@
 import axios from "axios";
 import qs from "qs";
 
-import { login, logout } from "../redux/token/tokenSlice";
+import {
+  login,
+  logout,
+  triggerBan,
+  maintenance,
+} from "../redux/token/tokenSlice";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
 const apiClient = axios.create({
@@ -59,6 +64,24 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const currentRefreshToken = storeRef?.getState().token.refreshToken;
+    console.log(error.response, "관리자에 의해 삭제처리된 계정입니다");
+
+    if (
+      error.response.status === 401 &&
+      error.response.data?.message === "관리자에 의해 삭제처리된 계정입니다."
+    ) {
+      storeRef?.dispatch(triggerBan());
+      window.location.href = "/banned-user-page";
+    }
+
+    if (
+      error.response.status === 503 &&
+      error.response.data?.message === "현재 서버 점검 중입니다."
+    ) {
+      console.log("haha");
+      storeRef?.dispatch(maintenance());
+      window.location.href = "/maintenance-page";
+    }
 
     if (
       error.response?.status === 401 &&

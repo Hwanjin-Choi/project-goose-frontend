@@ -5,7 +5,7 @@ import PackedBubbleChart from "../../components/WordCloud/WordCloud";
 import { useSelector } from "react-redux";
 import useMobileDetect from "../../hook/useMobileDetect";
 import styled, { keyframes } from "styled-components";
-
+import noKeywordGooseImg from "../../assets/nokeywordgoose.png";
 // 가변 높이를 위한 TrendingKeywordContainer 수정
 const TrendingKeywordContainer = styled.div`
   display: flex;
@@ -54,6 +54,52 @@ const ErrorMessage = styled.h4`
   border: 1px solid #d8000c;
 `;
 
+// 에러 메시지 스타일링 (선택 사항)
+const NoKeywordMessage = styled.h4`
+  color: #78af4c; /* 에러 메시지 색상 */
+  background-color: #white; /* 에러 메시지 배경색 */
+  padding: 10px 20px;
+  border-radius: 5px;
+`;
+const NoKeywordImg = styled.img`
+  width: 200px;
+  height: 200px;
+  padding: 10px;
+`;
+const NoKeywordContainer = styled.div`
+  padding: 10px;
+`;
+
+const sampleData = [
+  { keyword: "지진", count: 120 },
+  { keyword: "부동산 정책", count: 48 },
+  { keyword: "AI 기술", count: 45 },
+  { keyword: "저출생 대책", count: 42 },
+  { keyword: "소비자 물가", count: 39 },
+  { keyword: "기후변화", count: 38 },
+  { keyword: "북한 미사일", count: 37 },
+  { keyword: "주식 시장", count: 35 },
+  { keyword: "반도체", count: 33 },
+  { keyword: "의료개혁", count: 32 },
+  { keyword: "손흥민", count: 30 },
+  { keyword: "사이버 보안", count: 29 },
+  { keyword: "원달러 환율", count: 28 },
+  { keyword: "전기차 보조금", count: 27 },
+  { keyword: "고령화 사회", count: 26 },
+  { keyword: "비트코인", count: 22 },
+  { keyword: "선거", count: 21 },
+  { keyword: "가계부채", count: 20 },
+  { keyword: "양자컴퓨팅", count: 19 },
+  { keyword: "인구감소", count: 18 },
+  { keyword: "로봇 산업", count: 17 },
+  { keyword: "이정후", count: 16 },
+  { keyword: "기준금리", count: 15 },
+  { keyword: "북한 신형 구축함", count: 14 },
+  { keyword: "공매도 현황", count: 12 },
+  { keyword: "산사태", count: 10 },
+  { keyword: "노령연금", count: 8 },
+];
+
 const TrendingKeyword = () => {
   const isMobile = useMobileDetect();
 
@@ -72,12 +118,21 @@ const TrendingKeyword = () => {
           </LoadingContainer>
         ) : trendingKeywordStatus === "succeeded" ? (
           <PackedBubbleChart dataFromServer={keywordList} />
+        ) : keywordList.length === 0 ? (
+          <>
+            <NoKeywordContainer>
+              <NoKeywordImg src={noKeywordGooseImg} />
+              <NoKeywordMessage>
+                현재 집계된 키워드가 아직 부족합니다
+              </NoKeywordMessage>
+            </NoKeywordContainer>
+          </>
         ) : trendingKeywordStatus === "failed" ? ( // 'failed' 상태를 명시적으로 처리
           <ErrorMessage>
-            데이터를 불러오는 데 실패하였나이다. 다시 시도해 주십시오.
+            데이터를 불러오는 데 실패했습니다. 다시 시도해 주십시오.
           </ErrorMessage>
         ) : (
-          <ErrorMessage>알 수 없는 오류가 발생하였나이다.</ErrorMessage> // 예외적인 다른 상태 처리
+          <ErrorMessage>알 수 없는 오류가 발생했습니다.</ErrorMessage> // 예외적인 다른 상태 처리
         )}
       </TrendingKeywordContainer>
     </>

@@ -5,7 +5,7 @@ import { modifyInfo } from "../../api/MyPage/modify";
 import { dispatch } from "d3";
 import { useDispatch } from "react-redux";
 import { updateNickname } from "../../redux/auth/authSlice";
-
+import Modal from "../../components/Modal/Modal";
 const FormWrapper = styled.div`
   position: relative;
   width: 500px; /* 더 넓은 폼 영역 */
@@ -152,6 +152,13 @@ const MyPage = () => {
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [isPasswordSectionOpen, setIsPasswordSectionOpen] = useState(false);
   const [isNicknameSectionOpen, setIsNicknameSectionOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [modalContent, setModalContent] = useState({
+    title: "",
+    message: "",
+    onConfirm: null,
+  });
 
   // 폼 값 변경 핸들러
   const handleChange = (e) => {
@@ -188,15 +195,29 @@ const MyPage = () => {
           newPassword: formData.newPassword,
           nickname: null,
         });
-
-        alert("비밀번호가 성공적으로 변경되었습니다.");
+        console.log(response);
+        if (response) {
+          setIsModalOpen(true);
+        }
+        setModalContent({
+          title: "변경 성공",
+          message: `비밀번호 변경 성공했습니다`,
+          onConfirm: () => setIsModalOpen(false),
+          confirmText: "확인",
+        });
         setFormData({
           ...formData,
           currentPassword: "",
           newPassword: "",
         });
       } catch (error) {
-        alert(error.message || "비밀번호 변경 중 오류가 발생했습니다.");
+        setIsModalOpen(true);
+        setModalContent({
+          title: "변경 실패",
+          message: `${error.message || "비밀번호 변경에 실패했습니다"}`,
+          onConfirm: () => setIsModalOpen(false),
+          confirmText: "확인",
+        });
       }
     }
   };
@@ -224,16 +245,28 @@ const MyPage = () => {
           newPassword: null,
           nickname: formData.nickname,
         });
-        console.log(response, "response check in modify");
-
-        alert("닉네임이 성공적으로 변경되었습니다.");
+        if (response) {
+          setIsModalOpen(true);
+        }
+        setModalContent({
+          title: "닉네임 변경이 성공했습니다",
+          message: `성공적으로 ${formData.nickname} 으로 변경되었습니다`,
+          onConfirm: () => setIsModalOpen(false),
+          confirmText: "확인",
+        });
         dispatch(updateNickname(formData.nickname));
         setFormData({
           ...formData,
           nickname: "",
         });
       } catch (error) {
-        alert(error || "닉네임 변경 중 오류가 발생했습니다.");
+        setIsModalOpen(true);
+        setModalContent({
+          title: "닉네임 변경에 실패했습니다",
+          message: `${error.message}`,
+          onConfirm: () => setIsModalOpen(false),
+          confirmText: "확인",
+        });
       }
     }
   };
@@ -303,6 +336,7 @@ const MyPage = () => {
                 color: "#fff",
                 borderRadius: "8px",
                 border: "none",
+                cursor: "pointer",
               }}
               onClick={handlePasswordSubmit}
             >
@@ -344,6 +378,7 @@ const MyPage = () => {
                 color: "#fff",
                 borderRadius: "8px",
                 border: "none",
+                cursor: "pointer",
               }}
               onClick={handleNicknameSubmit}
             >
@@ -352,6 +387,17 @@ const MyPage = () => {
           </ButtonWrapper>
         </form>
       )}
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={modalContent.onConfirm}
+        title={modalContent.title}
+        confirmText={modalContent.confirmText}
+        showCancelButton={false}
+      >
+        <>{modalContent.message}</>
+      </Modal>
     </FormWrapper>
   );
 };
