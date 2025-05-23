@@ -6,6 +6,8 @@ import useMobileDetect from "../../hook/useMobileDetect";
 import { setKeyword, clearKeyword } from "../../redux/keyword/keywordSlice";
 import MainSearchInput from "../../components/MainSearchInput/MainSearchInput";
 import InfiniteScrollController from "../../components/InfiniteScrollController/InfiniteScrollController";
+import ScrapedNewsInfiniteScrollController from "../../components/InfiniteScrollController/ScrapedNewsInfiniteScrollController";
+
 import {
   getScrapedNewsByParam,
   resetScrapedNewsState,
@@ -87,7 +89,7 @@ const ViewScrapedNewsPage = () => {
         />
       </SearchInputWrapper>
 
-      <InfiniteScrollController mode="scraped" />
+      <ScrapedNewsInfiniteScrollController />
     </ViewNewsPageWrapper>
   );
 };
