@@ -9,6 +9,7 @@ import storage from "redux-persist/lib/storage";
 
 //slice 파일들
 import keywordSlice from "./keyword/keywordSlice";
+import scrapKeywordSlice from "./keyword/scrapKeywordSlice";
 import newsSlice from "./news/newsSlice";
 import registrationSlice from "./registration/registrationSlice";
 import tokenSlice from "./token/tokenSlice";
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   token: tokenSlice,
   scrapedNews: scrapedNewsSlice,
   recommend: recommendSlice,
+  scrapKeyword: scrapKeywordSlice,
   trending: trendingSlice,
 });
 

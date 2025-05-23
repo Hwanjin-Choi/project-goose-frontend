@@ -3,7 +3,6 @@ import apiClient from "../index";
 export const postScrapNews = async (body) => {
   try {
     const response = await apiClient.post("/news/scrap", body);
-    console.log(response);
     if (
       response.data &&
       (response.data.status === "SUCCESS" || response.status === 200)

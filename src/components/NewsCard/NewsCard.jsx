@@ -193,6 +193,17 @@ const ErrorBanner = styled.div`
   display: ${({ visible }) => (visible ? "block" : "none")};
 `;
 
+const decodeHtmlEntities = (html) => {
+  const txt = document.createElement("textarea");
+  txt.innerHTML = html;
+  return txt.value;
+};
+
+const getPlainText = (htmlString) => {
+  const noTags = htmlString.replace(/<\/?[^>]+(>|$)/g, ""); // 모든 HTML 태그 제거
+  return decodeHtmlEntities(noTags); // HTML 엔티티 디코딩
+};
+
 // 날짜 포맷팅 유틸리티 함수
 const formatDate = (dateString) => {
   if (!dateString) return "날짜 정보 없음";
@@ -222,7 +233,6 @@ const NewsCard = ({ newsItem }) => {
     imageUrl,
   } = newsItem;
   const [isScrapped, setIsScrapped] = useState(scraped || scrap);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState({
     title: "",
@@ -276,10 +286,10 @@ const NewsCard = ({ newsItem }) => {
 
     setErrorMessage("");
     const body = {
-      title,
+      title: getPlainText(title),
       originallink,
       link,
-      description,
+      description: getPlainText(title),
       pubDate,
       imageUrl,
     };

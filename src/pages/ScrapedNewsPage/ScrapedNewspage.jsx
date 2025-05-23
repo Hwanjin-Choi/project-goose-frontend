@@ -3,13 +3,15 @@ import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import useMobileDetect from "../../hook/useMobileDetect";
-import { setKeyword, clearKeyword } from "../../redux/keyword/keywordSlice";
 import MainSearchInput from "../../components/MainSearchInput/MainSearchInput";
 import InfiniteScrollController from "../../components/InfiniteScrollController/InfiniteScrollController";
+
 import {
-  getScrapedNewsByParam,
-  resetScrapedNewsState,
-} from "../../redux/scrapedNews/scrapedNewsSlice";
+  setScrapKeyword,
+  clearScrapKeyword,
+} from "../../redux/keyword/scrapKeywordSlice";
+
+import { resetScrapedNewsState } from "../../redux/scrapedNews/scrapedNewsSlice";
 
 // 페이지 전체를 감싸는 Wrapper
 const ViewNewsPageWrapper = styled.div`
@@ -31,36 +33,25 @@ const ViewScrapedNewsPage = () => {
   const { keyword: urlKeyword } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const isMobile = useMobileDetect();
 
   const [localSearchTerm, setLocalSearchTerm] = useState(urlKeyword || "");
 
   useEffect(() => {
     window.scrollTo(0, 0);
-
     dispatch(resetScrapedNewsState());
-    dispatch(clearKeyword());
 
     if (urlKeyword) {
-      dispatch(setKeyword(urlKeyword));
+      dispatch(setScrapKeyword(urlKeyword));
       setLocalSearchTerm(urlKeyword);
     } else {
-      dispatch(setKeyword(""));
+      dispatch(setScrapKeyword(""));
       setLocalSearchTerm("");
-
-      dispatch(
-        getScrapedNewsByParam({
-          keyword: null,
-          offset: 1,
-          limit: 10,
-        })
-      );
     }
   }, [dispatch, urlKeyword]);
 
   useEffect(() => {
     return () => {
-      dispatch(clearKeyword());
+      dispatch(clearScrapKeyword());
       dispatch(resetScrapedNewsState());
     };
   }, [dispatch]);
