@@ -97,8 +97,10 @@ const LandingPage = () => {
   };
 
   const handleSearch = (query) => {
-    dispatch(setKeyword(query));
-    naviagte(`/view-news/${query}`);
+    if (query && query.trim() !== "") {
+      dispatch(setKeyword(query));
+      naviagte(`/view-news/${query}`);
+    }
   };
 
   useEffect(() => {
