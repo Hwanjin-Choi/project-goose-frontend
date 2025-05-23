@@ -248,6 +248,7 @@ const NewsCard = ({ newsItem }) => {
   const scrapSearchText = useSelector(
     (state) => state.scrapKeyword.scrapSearchText
   );
+  const isAuthenticated = useSelector((state) => state.token.isAuthenticated);
 
   const location = useLocation();
 
@@ -391,16 +392,17 @@ const NewsCard = ({ newsItem }) => {
             ) : (
               <PublishDate>{formatDate(pubDate)}</PublishDate>
             )}
-
-            <ScrapButton
-              onClick={handleScrapButtonClick}
-              isScrapped={isScrapped}
-              aria-label={isScrapped ? "스크랩 취소" : "스크랩 하기"}
-            >
-              <FontAwesomeIcon
-                icon={isScrapped ? faSolidBookmark : faRegularBookmark}
-              />
-            </ScrapButton>
+            {isAuthenticated && (
+              <ScrapButton
+                onClick={handleScrapButtonClick}
+                isScrapped={isScrapped}
+                aria-label={isScrapped ? "스크랩 취소" : "스크랩 하기"}
+              >
+                <FontAwesomeIcon
+                  icon={isScrapped ? faSolidBookmark : faRegularBookmark}
+                />
+              </ScrapButton>
+            )}
           </Footer>
         </ContentArea>
       </CardWrapper>
