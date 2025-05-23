@@ -109,13 +109,21 @@ const LandingPage = () => {
     const fetchTrendingKeyword = async () => {
       try {
         await dispatch(getTrendingKeywordList());
+        console.log("Trending keywords fetched"); // 확인용 로그
       } catch (error) {
-        console.log(error);
+        console.error("Error fetching trending keywords:", error); // 에러 로깅 개선
       }
     };
 
     fetchTrendingKeyword();
-  }, []);
+
+    const intervalId = setInterval(fetchTrendingKeyword, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+      console.log("Interval cleared");
+    };
+  }, [dispatch]);
 
   return (
     <LandingPageContainer>
