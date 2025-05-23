@@ -5,6 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import useMobileDetect from "../../hook/useMobileDetect";
 import MainSearchInput from "../../components/MainSearchInput/MainSearchInput";
 import InfiniteScrollController from "../../components/InfiniteScrollController/InfiniteScrollController";
+import ScrapedNewsInfiniteScrollController from "../../components/InfiniteScrollController/ScrapedNewsInfiniteScrollController";
 
 import {
   setScrapKeyword,
@@ -78,7 +79,7 @@ const ViewScrapedNewsPage = () => {
         />
       </SearchInputWrapper>
 
-      <InfiniteScrollController mode="scraped" />
+      <ScrapedNewsInfiniteScrollController />
     </ViewNewsPageWrapper>
   );
 };
