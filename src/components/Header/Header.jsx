@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { setKeyword, clearKeyword } from "../../redux/keyword/keywordSlice";
 import {
   faSearch,
   faUser,
@@ -329,13 +328,6 @@ const Header = () => {
       console.log("Empty detected");
     }
   };
-
-  const goToScrapAndResetKeyword = () => {
-    dispatch(setKeyword("")); // 키워드 초기화
-    onNavigate("/scrap"); // 스크랩 페이지 이동
-    setIsDropdownOpen(false);
-  };
-
   useEffect(() => {
     setSearchTerm(currentKeyword);
   }, [currentKeyword]);

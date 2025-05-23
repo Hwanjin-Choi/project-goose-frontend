@@ -17,6 +17,7 @@ export const getScrapedNewsByParam = createAsyncThunk(
   "news/scrapedNews",
   async (payload, { rejectWithValue }) => {
     try {
+      console.log("요청 보내기");
       const response = await apiClient.get("/news/scrap", { params: payload });
 
       if (response.data) {
