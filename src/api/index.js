@@ -1,6 +1,6 @@
 import axios from "axios";
 import qs from "qs";
-
+import { store } from "../redux/store"; // Redux 스토어를 직접 import 합니다.
 import { login, logout } from "../redux/token/tokenSlice";
 
 const API_BASE_URL = import.meta.env.VITE_API_URL;
@@ -15,15 +15,10 @@ const apiClient = axios.create({
   withCredentials: true,
 });
 
-let storeRef = null;
-export const injectStore = (_store) => {
-  storeRef = _store;
-};
-
 // --- 요청 인터셉터 ---
 apiClient.interceptors.request.use(
   (config) => {
-    const accessToken = storeRef?.getState().token.accessToken; // 스토어에서 직접 accessToken 가져오기
+    const accessToken = store.getState().token.accessToken; // 스토어에서 직접 accessToken 가져오기
     if (accessToken) {
       config.headers["Authorization"] = `Bearer ${accessToken}`;
     }
@@ -49,7 +44,7 @@ const processQueue = (error, token = null) => {
 };
 
 const handleLogoutForInterceptor = () => {
-  storeRef?.dispatch(logout());
+  store.dispatch(logout());
   window.location.href = "/expired-page";
   console.error("User logged out from interceptor due to token issues.");
 };
@@ -58,7 +53,7 @@ apiClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    const currentRefreshToken = storeRef?.getState().token.refreshToken;
+    const currentRefreshToken = store.getState().token.refreshToken;
 
     if (
       error.response?.status === 401 &&
@@ -119,7 +114,7 @@ apiClient.interceptors.response.use(
           const newAccessToken = responseData.accessToken;
           console.log("New access token obtained:", newAccessToken);
           // 스토어의 dispatch 사용
-          storeRef?.dispatch(
+          store.dispatch(
             login({
               accessToken: newAccessToken,
               refreshToken: currentRefreshToken,
