@@ -16,6 +16,7 @@ import tokenSlice from "./token/tokenSlice";
 import scrapedNewsSlice from "./scrapedNews/scrapedNewsSlice";
 import recommendSlice from "./recommend/recommendSlice";
 import trendingSlice from "./trending/trendingSlice";
+import scrapKeywordSlice from "./keyword/scrapKeywordSlice";
 
 // 여러 리듀서를 합치는 경우 (지금은 하나지만 확장성 고려)
 const rootReducer = combineReducers({
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
   scrapedNews: scrapedNewsSlice,
   recommend: recommendSlice,
   trending: trendingSlice,
+  scrapKeyword: scrapKeywordSlice,
 });
 
 // persist 설정

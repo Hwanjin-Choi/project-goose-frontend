@@ -121,7 +121,7 @@ const InfiniteScrollController = () => {
       <InfiniteScroll
         dataLength={newsList.length}
         next={loadMoreNews}
-        hasMore={newsHasMore && newsStatus !== "loading"}
+        hasMore={newsHasMore}
         loader={
           <NewsCardsContainer>
             <>
