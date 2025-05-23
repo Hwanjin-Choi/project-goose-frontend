@@ -9,7 +9,7 @@ import { faBookmark as faRegularBookmark } from "@fortawesome/free-regular-svg-i
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Modal from "../Modal/Modal";
 import { postScrapNews } from "../../api/Scrap/ScrapNews";
-
+import { useSelector } from "react-redux";
 const CardWrapper = styled.div`
   background: #ffffff;
   border-radius: 16px;
@@ -230,7 +230,7 @@ const NewsCard = ({ newsItem }) => {
     onConfirm: null,
   });
   const [errorMessage, setErrorMessage] = useState(""); // 오류 메시지 상태
-
+  const isAuthenticated = useSelector((state) => state.token.isAuthenticated);
   // 스크랩 버튼 클릭 시 모달 열기
   const handleScrapButtonClick = (e) => {
     e.stopPropagation();
@@ -330,15 +330,17 @@ const NewsCard = ({ newsItem }) => {
           </div>
           <Footer>
             <PublishDate>{formatDate(pubDate)}</PublishDate>
-            <ScrapButton
-              onClick={handleScrapButtonClick}
-              isScrapped={isScrapped}
-              aria-label={isScrapped ? "스크랩 취소" : "스크랩 하기"}
-            >
-              <FontAwesomeIcon
-                icon={isScrapped ? faSolidBookmark : faRegularBookmark}
-              />
-            </ScrapButton>
+            {isAuthenticated && (
+              <ScrapButton
+                onClick={handleScrapButtonClick}
+                isScrapped={isScrapped}
+                aria-label={isScrapped ? "스크랩 취소" : "스크랩 하기"}
+              >
+                <FontAwesomeIcon
+                  icon={isScrapped ? faSolidBookmark : faRegularBookmark}
+                />
+              </ScrapButton>
+            )}
           </Footer>
         </ContentArea>
       </CardWrapper>
