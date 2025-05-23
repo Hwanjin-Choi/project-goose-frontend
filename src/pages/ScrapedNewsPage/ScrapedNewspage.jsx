@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
-import useMobileDetect from "../../hook/useMobileDetect";
 import MainSearchInput from "../../components/MainSearchInput/MainSearchInput";
-import InfiniteScrollController from "../../components/InfiniteScrollController/InfiniteScrollController";
 import ScrapedNewsInfiniteScrollController from "../../components/InfiniteScrollController/ScrapedNewsInfiniteScrollController";
 
 import {

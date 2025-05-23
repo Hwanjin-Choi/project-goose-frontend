@@ -20,7 +20,6 @@ export const getScrapedNewsByParam = createAsyncThunk(
       const response = await apiClient.get("/news/scrap", { params: payload });
 
       if (response.data) {
-        console.log(response.data);
         return response.data; // 그대로 content, pageable 등을 넘겨줌
       } else {
         throw new Error("스크랩된 뉴스를 불러오는데 실패했습니다");
