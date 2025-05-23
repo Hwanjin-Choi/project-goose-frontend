@@ -1,14 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
-import { login as setToken } from "../../redux/token/tokenSlice";
-import { login as setAuth } from "../../redux/auth/authSlice";
-import { login as loginApi } from "../../api/Login/loginApi";
 import "./SignIn.css";
+
+import { login as setToken, logout } from "../../redux/token/tokenSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { login as loginApi } from "../../api/Login/loginApi";
 
 const Signin = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [userData, setUserData] = useState({
     username: "",
     password: "",
@@ -63,8 +62,11 @@ const Signin = () => {
         const { username, memberId, nickname } = result.data.data.userInfo;
         const { accessToken, refreshToken } = result.data.data.tokenInfo;
 
-        dispatch(setToken({ accessToken, refreshToken }));
-        dispatch(setAuth({ username, nickname }));
+        dispatch(setToken({ accessToken, refreshToken, nickname }));
+
+        localStorage.setItem("nickname", nickname);
+        localStorage.setItem("accessToken", accessToken);
+        localStorage.setItem("refreshToken", refreshToken);
 
         console.log(username);
         console.log(memberId);
@@ -85,16 +87,10 @@ const Signin = () => {
     }
   };
 
+  const navigate = useNavigate();
   const navi = () => {
     navigate("/registration");
   };
-
-  const isAuthenticated = useSelector((state) => state.token.isAuthenticated);
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/", { replace: true });
-    }
-  }, [isAuthenticated, navigate]);
 
   return (
     <div className="signin-container">

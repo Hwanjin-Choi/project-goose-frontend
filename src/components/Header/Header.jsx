@@ -16,9 +16,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import Goose from "../../assets/Goose_header.svg";
 import { useSelector, useDispatch } from "react-redux";
 import useMobileDetect from "../../hook/useMobileDetect";
-import { store } from "../../redux/store";
-import { logoutUsingToken } from "../../redux/token/tokenSlice";
-
 const HEADER_HEIGHT = "68px";
 
 // Styled Components 정의
@@ -310,17 +307,16 @@ const Header = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch(); // 현재 코드에서는 사용되지 않음
 
-  const nickname = useSelector((state) => state.auth.nickname);
+  const nickname = "문어체"; // 실제 닉네임은 Redux나 API로부터 받아와야 합니다.
 
   const onLogin = () => {
-    //setIsLoggedIn(true); // 추후 변경
-
+    // setIsLoggedIn(true); // Redux 상태 변경으로 처리되어야 함
     navigate("/login");
   };
-
-  const onLogout = async () => {
-    dispatch(logoutUsingToken());
-    navigate("/");
+  const onLogout = () => {
+    // setIsLoggedIn(false); // 실제 로그아웃 로직 (Redux 상태 변경, API 호출 등) 필요
+    // 예시: dispatch(logoutAction());
+    console.log("Logout action dispatched (example)");
   };
   const onNavigate = (url) => {
     navigate(url);
